@@ -1,3 +1,4 @@
+
 test:
   script:
     - cd firehawk; ./firehawk.sh --package --box-file-out 010 --test-vm
