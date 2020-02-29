@@ -129,8 +129,8 @@ else
     source ./update_vars.sh --$TF_VAR_envtier --vagrant
 fi
 
-echo "Vagrant box in $ansiblecontrol_box"
-echo "Vagrant box in $firehawkgateway_box"
+echo "ansiblecontrol Vagrant box in $ansiblecontrol_box"
+echo "firehawkgateway Vagrant box in $firehawkgateway_box"
 vagrant up
 
 if [[ ! -z "$box_file_out" ]] ; then
