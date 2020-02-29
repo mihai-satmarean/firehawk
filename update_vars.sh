@@ -98,7 +98,7 @@ tier () {
     export TF_VAR_envtier=$val
 }
 
-var_file=
+export var_file=
 
 var_file () {
     if [[ "$verbose" == true ]]; then
@@ -107,9 +107,9 @@ var_file () {
     export var_file="${val}"
 }
 
-box_file_in=""
-ansiblecontrol_box="bento/ubuntu-16.04"
-firehawkgateway_box="bento/ubuntu-16.04"
+export box_file_in=""
+export ansiblecontrol_box="bento/ubuntu-16.04"
+export firehawkgateway_box="bento/ubuntu-16.04"
 
 echo "box - ansiblecontrol_box $ansiblecontrol_box"
 
