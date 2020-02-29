@@ -32,13 +32,13 @@ rm $temp_output
 
 failed=false
 verbose=false
-optspec=":hv-:t:"
 
 encrypt_mode="encrypt"
 
 # IFS must allow us to iterate over lines instead of words seperated by ' '
 IFS='
 '
+optspec=":hv-:t:"
 
 verbose () {
     local OPTIND
@@ -59,11 +59,19 @@ verbose () {
                         ;;
                     var-file=*)
                         ;;
+                    box-file-in)
+                        val="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
+                        opt="${OPTARG}"
+                        ;;
+                    box-file-in=*)
+                        ;;
                     vault)
                         val="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
                         opt="${OPTARG}"
                         ;;
                     vault=*)
+                        ;;
+                    vagrant)
                         ;;
                     *)
                         if [ "$OPTERR" = 1 ] && [ "${optspec:0:1}" != ":" ]; then
@@ -97,6 +105,21 @@ var_file () {
         echo "Parsing var_file option: '--${opt}', value: '${val}'" >&2;
     fi
     export var_file="${val}"
+}
+
+box_file_in=""
+ansiblecontrol_box="bento/ubuntu-16.04"
+firehawkgateway_box="bento/ubuntu-16.04"
+
+echo "box - ansiblecontrol_box $ansiblecontrol_box"
+
+box_file_in () {
+    if [[ "$verbose" == true ]]; then
+        echo "Parsing box_file_in option: '--${opt}', value: '${val}'" >&2;
+    fi
+    export box_file_in="${val}"
+    export ansiblecontrol_box="ansiblecontrol-${val}.box"
+    export firehawkgateway_box="firehawkgateway-${val}.box"
 }
 
 save_template_fn () {
@@ -174,6 +197,16 @@ parse_opts () {
                         val=${OPTARG#*=}
                         opt=${OPTARG%=$val}
                         var_file
+                        ;;
+                    box-file-in)
+                        val="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
+                        opt="${OPTARG}"
+                        box_file_in
+                        ;;
+                    box-file-in=*)
+                        val=${OPTARG#*=}
+                        opt=${OPTARG%=$val}
+                        box_file_in
                         ;;
                     vault)
                         val="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
