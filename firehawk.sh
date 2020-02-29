@@ -137,8 +137,8 @@ if [[ ! -z "$box_file_out" ]] ; then
     # if a box_file_out is defined, then we package the images for each box out to files.
     echo "Set Vagrant box out $ansiblecontrol_box_out"
     echo "Set Vagrant box out $firehawkgateway_box_out"
-    rm $ansiblecontrol_box_out
-    rm $firehawkgateway_box_out
+    [ ! -e $ansiblecontrol_box_out ] || rm $ansiblecontrol_box_out
+    [ ! -e $firehawkgateway_box_out ] || rm $firehawkgateway_box_out
     vagrant package ansiblecontrol --output $ansiblecontrol_box_out &
     vagrant package firehawkgateway --output $firehawkgateway_box_out
 fi
