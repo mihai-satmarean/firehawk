@@ -145,7 +145,7 @@ echo "firehawkgateway Vagrant box in $firehawkgateway_box"
 vagrant up
 
 if [[ ! -z "$box_file_out" ]] ; then
-    # if a box_file_out is defined, then we package the images for each box out to files.
+    # If a box_file_out is defined, then we package the images for each box out to files.  The vm will be stopped to eprform this step.
     echo "Set Vagrant box out $ansiblecontrol_box_out"
     echo "Set Vagrant box out $firehawkgateway_box_out"
     [ ! -e $ansiblecontrol_box_out ] || rm $ansiblecontrol_box_out
@@ -166,7 +166,7 @@ if [ "$test_vm" = false ] ; then
     echo "last exit code $?"
 
     n=0
-    retries=10
+    retries=100
     until [ $n -ge $retries ]
     do
     vagrant ssh-config ansiblecontrol && break  # substitute your command here
