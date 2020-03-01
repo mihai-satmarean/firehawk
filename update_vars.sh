@@ -312,20 +312,20 @@ source_vars () {
         printf "...Using vault file $var_file\n"
         template_path="$TF_VAR_firehawk_path/secrets.template"
     elif [[ "$var_file" = "vagrant" ]]; then
-        printf '...Using variable file vagrant. No encryption/decryption will be used.\n'
+        printf '...Using variable file vagrant. No encryption/decryption needed for these contents.\n'
         encrypt_mode="none"
         template_path="$TF_VAR_firehawk_path/vagrant.template"
     elif [[ "$var_file" = "config" ]]; then
-        printf '...Using variable file config. No encryption/decryption will be used.\n'
+        printf '...Using variable file config. No encryption/decryption needed for these contents.\n'
         encrypt_mode="none"
         template_path="$TF_VAR_firehawk_path/config.template"
     elif [[ "$var_file" = "defaults" ]]; then
-        printf '...Using variable file defaults. No encryption/decryption will be used.\n'
+        printf '...Using variable file defaults. No encryption/decryption needed for these contents.\n'
         encrypt_mode="none"
         template_path="$TF_VAR_firehawk_path/defaults.template"
     elif [[ "$var_file" = "config-override" ]]; then
         var_file="config-override-$TF_VAR_envtier"
-        printf "...Using variable file $var_file. No encryption/decryption will be used.\n"
+        printf "...Using variable file $var_file. No encryption/decryption needed for these contents.\n"
         encrypt_mode="none"
         template_path="$TF_VAR_firehawk_path/config-override.template"
     else
