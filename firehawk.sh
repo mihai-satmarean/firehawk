@@ -155,8 +155,13 @@ if [[ ! -z "$box_file_out" ]] ; then
 fi
 
 if [ "$test_vm" = false ] ; then
-    
     vagrant ssh-config ansiblecontrol
+    echo "last exit code $?"
+    echo "Wait for the host to come up"
+    sleep 30
+    vagrant ssh-config ansiblecontrol
+    echo "last exit code $?"
+
     
     hostname=$(vagrant ssh-config ansiblecontrol | grep -Po '.*HostName\ \K(\d*.\d*.\d*.\d*)')
     port=$(vagrant ssh-config ansiblecontrol | grep -Po '.*Port\ \K(\d*)')
