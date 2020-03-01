@@ -117,16 +117,27 @@ parse_opts "$@"
 # if not buildinging a package (.box file) and we specify a box file, then it must be the basis to start from
 # else if we are building a package, it will be a post process .
 
-if [[ "$test_vm" = false ]] ; then
-    echo -n Password:
-    read -s password
-fi
-
 # if box file in is defined, then vagrant will use this file in place of the standard image.
 if [[ ! -z "$box_file_in" ]] ; then
     source ./update_vars.sh --$TF_VAR_envtier --box-file-in "$box_file_in" --vagrant
 else
     source ./update_vars.sh --$TF_VAR_envtier --vagrant
+fi
+
+if [[ "$test_vm" = false ]] ; then
+    if [[ ! -z "$firehawksecret" ]]; then
+        # to manually enter an ecnrypted variable in you configuration use:
+        # firehawksecret=$(echo -n "test some input that will be encrypted and stored as an env var" | ansible-vault encrypt_string --vault-id $vault_key --stdin-name firehawksecret | base64 -w 0)
+        # that variable can be extracted here if specified
+        password=$(firehawk/scripts/ansible-encrypt.sh --vault-id $vault_key --decrypt $firehawksecret)
+        if [[ -z "$password" ]]; then
+            echo "ERROR: unable to extract password from defined firehawksecret.  Either remove the firehawksecret variable, or debugging will be required for automation to continue."
+            exit 1
+        fi
+    else
+        echo -n Password:
+        read -s password
+    fi
 fi
 
 echo "ansiblecontrol Vagrant box in $ansiblecontrol_box"

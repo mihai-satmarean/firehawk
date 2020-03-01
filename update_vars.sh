@@ -171,7 +171,6 @@ function help {
 # --tier=dev
 # which each results in the same function tier() running.
 
-#OPTIND=0
 parse_opts () {
     local OPTIND
     OPTIND=0
