@@ -180,10 +180,14 @@ if [ "$test_vm" = false ] ; then
 
     hostname=$(vagrant ssh-config ansiblecontrol | grep -Po '.*HostName\ \K(\d*.\d*.\d*.\d*)')
     port=$(vagrant ssh-config ansiblecontrol | grep -Po '.*Port\ \K(\d*)')
+    
     echo "SSH to vagrant host with..."
     echo "Hostname: $hostname"
     echo "Port: $port"
     echo "tier --$TF_VAR_envtier"
-    # use expect to pipe through the password aquired initially.
-    ./scripts/expect-firehawk.sh $hostname $port --$TF_VAR_envtier $password
+
+    if [[ ! -z "$hostname" && ! -z "$port" && ! -z "$TF_VAR_envtier" ]]; then
+        # use expect to pipe through the password aquired initially.
+        ./scripts/expect-firehawk.sh $hostname $port --$TF_VAR_envtier $password
+    fi
 fi
