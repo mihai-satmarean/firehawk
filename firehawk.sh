@@ -155,7 +155,7 @@ if [[ ! -z "$box_file_out" ]] ; then
 fi
 
 if [ "$test_vm" = false ] ; then
-
+    vagrant up
     echo "test vagrant ssh config command."
     vagrant ssh-config
     vagrant ssh-config ansiblecontrol
@@ -188,6 +188,7 @@ if [ "$test_vm" = false ] ; then
 
     if [[ ! -z "$hostname" && ! -z "$port" && ! -z "$TF_VAR_envtier" ]]; then
         # use expect to pipe through the password aquired initially.
-        ./scripts/expect-firehawk.sh $hostname $port --$TF_VAR_envtier $password
+        echo "success"
+        # ./scripts/expect-firehawk.sh $hostname $port --$TF_VAR_envtier $password
     fi
 fi
