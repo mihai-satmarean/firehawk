@@ -361,6 +361,8 @@ source_vars () {
     fi
 
     echo "vault_key $vault_key"
+    echo "TF_VAR_vault_key_name_dev $TF_VAR_vault_key_name_dev"
+    echo "TF_VAR_vault_key_name_prod $TF_VAR_vault_key_name_prod"
     # set vault key location based on envtier dev/prod
     if [[ "$TF_VAR_envtier" = 'dev' ]]; then
         vault_key="$(to_abs_path $TF_VAR_firehawk_path/../secrets/keys/$TF_VAR_vault_key_name_dev)"
