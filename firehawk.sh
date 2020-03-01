@@ -155,6 +155,9 @@ if [[ ! -z "$box_file_out" ]] ; then
 fi
 
 if [ "$test_vm" = false ] ; then
+    
+    vagrant ssh-config ansiblecontrol
+    
     hostname=$(vagrant ssh-config ansiblecontrol | grep -Po '.*HostName\ \K(\d*.\d*.\d*.\d*)')
     port=$(vagrant ssh-config ansiblecontrol | grep -Po '.*Port\ \K(\d*)')
     echo "SSH to vagrant host with..."
