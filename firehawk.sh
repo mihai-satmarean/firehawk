@@ -157,7 +157,7 @@ fi
 if [ "$test_vm" = false ] ; then
     hostname=$(vagrant ssh-config ansiblecontrol | grep -Po '.*HostName\ \K(\d*.\d*.\d*.\d*)')
     port=$(vagrant ssh-config ansiblecontrol | grep -Po '.*Port\ \K(\d*)')
-
-    use expect to pipe through the password aquired initially.
+    
+    # use expect to pipe through the password aquired initially.
     ./scripts/expect-firehawk.sh $hostname $port $1 $password
 fi
