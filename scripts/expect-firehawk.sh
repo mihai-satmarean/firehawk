@@ -3,6 +3,7 @@
 log_user 0
 #stty -echo
 
+# need to remove this list array method. consider injecting pass as encrypted env var now
 set hostname [lindex $argv 0];
 set port [lindex $argv 1];
 set tier [lindex $argv 2];

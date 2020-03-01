@@ -129,8 +129,6 @@ if [[ "$test_vm" = false ]] ; then
         # to manually enter an ecnrypted variable in you configuration use:
         # firehawksecret=$(echo -n "test some input that will be encrypted and stored as an env var" | ansible-vault encrypt_string --vault-id $vault_key --stdin-name firehawksecret | base64 -w 0)
         # that variable can be extracted here if specified
-        echo "vault_key $vault_key"
-        echo "firehawksecret $firehawksecret"
         password=$(./scripts/ansible-encrypt.sh --vault-id $vault_key --decrypt $firehawksecret)
         if [[ -z "$password" ]]; then
             echo "ERROR: unable to extract password from defined firehawksecret.  Either remove the firehawksecret variable, or debugging will be required for automation to continue."
@@ -159,7 +157,10 @@ fi
 if [ "$test_vm" = false ] ; then
     hostname=$(vagrant ssh-config ansiblecontrol | grep -Po '.*HostName\ \K(\d*.\d*.\d*.\d*)')
     port=$(vagrant ssh-config ansiblecontrol | grep -Po '.*Port\ \K(\d*)')
-
+    echo "SSH to vagrant host with..."
+    echo "Hostname: $hostname"
+    echo "Port: $port"
+    echo "tier --$TF_VAR_envtier"
     # use expect to pipe through the password aquired initially.
-    ./scripts/expect-firehawk.sh $hostname $port $1 $password
+    ./scripts/expect-firehawk.sh $hostname $port --$TF_VAR_envtier $password
 fi

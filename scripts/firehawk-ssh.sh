@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "ssh init-firehawk.sh"
 echo "hostname $1"
 echo "port $2"
 echo "tier $3"
