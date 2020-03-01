@@ -360,11 +360,14 @@ source_vars () {
         fi
     fi
 
+    echo "vault_key $vault_key"
     # set vault key location based on envtier dev/prod
     if [[ "$TF_VAR_envtier" = 'dev' ]]; then
         vault_key="$(to_abs_path $TF_VAR_firehawk_path/../secrets/keys/$TF_VAR_vault_key_name_dev)"
+        echo "set vault_key $vault_key"
     elif [[ "$TF_VAR_envtier" = 'prod' ]]; then
         vault_key="$(to_abs_path $TF_VAR_firehawk_path/../secrets/keys/$TF_VAR_vault_key_name_prod)"
+        echo "set vault_key $vault_key"
     else 
         printf "\n...${RED}WARNING: envtier evaluated to no match for dev or prod.  Inspect update_vars.sh to handle this case correctly.${NC}\n"
         return 88
