@@ -155,6 +155,9 @@ if [[ ! -z "$box_file_out" ]] ; then
 fi
 
 if [ "$test_vm" = false ] ; then
+
+    echo "test vagrant ssh config command."
+    vagrant ssh-config
     vagrant ssh-config ansiblecontrol
     echo "last exit code $?"
     echo "Wait for the host to come up"
@@ -162,7 +165,19 @@ if [ "$test_vm" = false ] ; then
     vagrant ssh-config ansiblecontrol
     echo "last exit code $?"
 
-    
+    n=0
+    retries=10
+    until [ $n -ge $retries ]
+    do
+    vagrant ssh-config ansiblecontrol && break  # substitute your command here
+    n=$[$n+1]
+    sleep 15
+    done
+    if [ $n -ge $retries ]; then
+        echo "Error: timed out waiting for vagrant ssh config command - failed."
+        exit 1
+    fi
+
     hostname=$(vagrant ssh-config ansiblecontrol | grep -Po '.*HostName\ \K(\d*.\d*.\d*.\d*)')
     port=$(vagrant ssh-config ansiblecontrol | grep -Po '.*Port\ \K(\d*)')
     echo "SSH to vagrant host with..."
