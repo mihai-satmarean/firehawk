@@ -20,7 +20,8 @@ export TF_VAR_firehawk_path=$SCRIPTDIR
 . $TF_VAR_firehawk_path/scripts/exit_test.sh
 
 mkdir -p $TF_VAR_firehawk_path/tmp/
-mkdir -p $TF_VAR_firehawk_path/../secrets/
+mkdir -p $TF_VAR_firehawk_path/../secrets/keys
+
 # The template will be updated by this script
 save_template=true
 tmp_template_path=$TF_VAR_firehawk_path/tmp/secrets.template
