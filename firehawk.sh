@@ -155,7 +155,7 @@ if [[ ! -z "$box_file_out" ]] ; then
 fi
 
 if [ "$test_vm" = false ] ; then
-    vagrant up
+    vagrant reload
     echo "test vagrant ssh config command."
     vagrant ssh-config
     vagrant ssh-config ansiblecontrol
