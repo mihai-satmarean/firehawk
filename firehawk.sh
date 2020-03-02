@@ -144,18 +144,8 @@ echo "ansiblecontrol Vagrant box in $ansiblecontrol_box"
 echo "firehawkgateway Vagrant box in $firehawkgateway_box"
 vagrant up
 
-if [[ ! -z "$box_file_out" ]] ; then
-    # If a box_file_out is defined, then we package the images for each box out to files.  The vm will be stopped to eprform this step.
-    echo "Set Vagrant box out $ansiblecontrol_box_out"
-    echo "Set Vagrant box out $firehawkgateway_box_out"
-    [ ! -e $ansiblecontrol_box_out ] || rm $ansiblecontrol_box_out
-    [ ! -e $firehawkgateway_box_out ] || rm $firehawkgateway_box_out
-    vagrant package ansiblecontrol --output $ansiblecontrol_box_out &
-    vagrant package firehawkgateway --output $firehawkgateway_box_out
-fi
-
 if [ "$test_vm" = false ] ; then
-    vagrant reload
+    # vagrant reload
     echo "test vagrant ssh config command."
     vagrant ssh-config
     vagrant ssh-config ansiblecontrol
@@ -191,4 +181,14 @@ if [ "$test_vm" = false ] ; then
         echo "success"
         # ./scripts/expect-firehawk.sh $hostname $port --$TF_VAR_envtier $password
     fi
+fi
+
+if [[ ! -z "$box_file_out" ]] ; then
+    # If a box_file_out is defined, then we package the images for each box out to files.  The vm will be stopped to eprform this step.
+    echo "Set Vagrant box out $ansiblecontrol_box_out"
+    echo "Set Vagrant box out $firehawkgateway_box_out"
+    [ ! -e $ansiblecontrol_box_out ] || rm $ansiblecontrol_box_out
+    [ ! -e $firehawkgateway_box_out ] || rm $firehawkgateway_box_out
+    vagrant package ansiblecontrol --output $ansiblecontrol_box_out &
+    vagrant package firehawkgateway --output $firehawkgateway_box_out
 fi
