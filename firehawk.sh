@@ -146,19 +146,12 @@ vagrant up
 
 if [ "$test_vm" = false ] ; then
     # vagrant reload
-    echo "test vagrant ssh config command."
+    echo "Vagrant SSH config:"
     vagrant ssh-config
-    vagrant ssh-config ansiblecontrol
-    echo "last exit code $?"
-    echo "Wait for the host to come up"
-    sleep 30
-    vagrant ssh-config ansiblecontrol
-    echo "last exit code $?"
-
-    n=0
-    retries=100
+    n=0; retries=100
     until [ $n -ge $retries ]
     do
+    echo "Vagrant SSH config ansiblecontrol:"
     vagrant ssh-config ansiblecontrol && break  # substitute your command here
     n=$[$n+1]
     sleep 15
@@ -178,8 +171,8 @@ if [ "$test_vm" = false ] ; then
 
     if [[ ! -z "$hostname" && ! -z "$port" && ! -z "$TF_VAR_envtier" ]]; then
         # use expect to pipe through the password aquired initially.
-        echo "success"
-        # ./scripts/expect-firehawk.sh $hostname $port --$TF_VAR_envtier $password
+        echo "...Logging in to Vagrant host"
+        ./scripts/expect-firehawk.sh $hostname $port --$TF_VAR_envtier $password
     fi
 fi
 

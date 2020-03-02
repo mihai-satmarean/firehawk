@@ -67,6 +67,7 @@ else
   echo "...Start Terraform"
   terraform init; exit_test
   terraform apply --auto-approve; exit_test
+  terraform destroy --auto-approve; exit_test
   # After this point provisioning will now execute from TF.
   # $TF_VAR_firehawk_path/scripts/init-openfirehawkserver-030-tf-s3user-deadlinercs.sh $ARGS; exit_test
   # $TF_VAR_firehawk_path/scripts/init-openfirehawkserver-040-ssh-routes-nfs-houdini-license-repository.sh $ARGS; exit_test
