@@ -160,6 +160,10 @@ if [ "$test_vm" = false ] ; then
         echo "Error: timed out waiting for vagrant ssh config command - failed."
         exit 1
     fi
+    ansiblecontrol_key=$(vagrant ssh-config ansiblecontrol | grep -oP "^  IdentityFile \K.*")
+    cp -f $ansiblecontrol_key ../secrets/keys/ansible_control_private_key
+    firehawkgateway_key=$(vagrant ssh-config firehawkgateway | grep -oP "^  IdentityFile \K.*")
+    cp -f $firehawkgateway_key ../secrets/keys/firehawkgateway_private_key
 
     hostname=$(vagrant ssh-config ansiblecontrol | grep -Po '.*HostName\ \K(\d*.\d*.\d*.\d*)')
     port=$(vagrant ssh-config ansiblecontrol | grep -Po '.*Port\ \K(\d*)')
