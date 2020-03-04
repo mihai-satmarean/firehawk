@@ -232,6 +232,16 @@
   become: true
   when: houdini_install_type == "server"
 
+
+- name: SERVER INSTALL - Permissions
+  file:
+    path: "{{ download_to_dir }}/{{ houdini_linux_filename }}/houdini.install"
+    mode: u=rX,g=rX,o=r
+    owner: "{{ variable_user }}"
+    group: syscontrol
+  become: true
+  when: houdini_install_type == "server"
+
 # - name: Unarchive a file with extra options
 #   unarchive:
 #     src: "{{ download_to_dir }}/{{ houdini_linux_filename }}"
@@ -248,9 +258,10 @@
   shell: |
     set -x
     cd {{ download_to_dir }}/{{ houdini_linux_filename | regex_replace('.tar.gz$', '') }}
+    ls
     sudo ./houdini.install --accept-EULA --install-houdini --install-license --install-hfs-symlink --auto-install
   register: houdini_install_out
-  become_user: "{{ variable_user }}"
+  # become_user: "{{ variable_user }}"
   become: true
   when: houdini_install_type == "server"
 
