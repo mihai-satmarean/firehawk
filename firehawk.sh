@@ -5,6 +5,9 @@ unset HISTFILE
 
 printf "\nRunning ansiblecontrol with $1...\n"
 
+# Abort script with correct exit code instead of continuing if non zero exit code occurs.
+set -e
+
 tier () {
     if [[ "$verbose" == true ]]; then
         echo "Parsing tier option: '--${opt}', value: '${val}'" >&2;
