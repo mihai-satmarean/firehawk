@@ -104,6 +104,7 @@
     sudo python /opt/houdini_install_script/houdini_install.py -u '{{ sesi_username }}' -p '{{ sesi_password }}' -i /opt/houdini -b {{ houdini_version_item.houdini_build }} -t {{ download_to_dir }} -q false; exit_test
   register: houdini_install_out
   no_log: true
+  become_user: "{{ variable_user }}"
   become: true
   when: houdini_version_item.houdini_auto_version
   failed_when:
@@ -113,6 +114,15 @@
     msg:  "{{ houdini_install_out.stdout }}"
   when: houdini_install_type != "server" and houdini_version_item.houdini_auto_version
 
+- name: Permissions
+  file:
+    path: "{{ download_to_dir }}/{{ houdini_linux_filename }}"
+    mode: u+rw,g+rw,o+rw
+    owner: "{{ variable_user }}"
+    group: syscontrol
+  become: true
+  when: houdini_install_type != "server"
+
 - name: Install Houdini with python script - specific existing version from s3 bucket
   shell: |
     cd /opt/houdini_install_script/
@@ -120,6 +130,7 @@
     sudo python /opt/houdini_install_script/houdini_install.py -u '{{ sesi_username }}' -p '{{ sesi_password }}' -i /opt/houdini -b {{ houdini_version_item.houdini_build }} -t {{ download_to_dir }} -q false -f {{ houdini_linux_filename }}; exit_test
   register: houdini_install_out
   no_log: true
+  become_user: "{{ variable_user }}"
   become: true
   when: houdini_install_type != "server" and not houdini_version_item.houdini_auto_version
   failed_when:
@@ -135,6 +146,7 @@
     sudo sed -i '/licensingMode = sesinetd/s/^# //g' /opt/hfs{{ houdini_version_item.houdini_major_version }}/houdini/Licensing.opt
     sudo cat /opt/hfs{{ houdini_version_item.houdini_major_version }}/houdini/Licensing.opt
   register: houdini_hserver_out
+  become_user: "{{ variable_user }}"
   become: true
   when: houdini_install_type != "server"
 
@@ -169,12 +181,22 @@
   become: true
   when: houdini_install_type == "server" and hserver_check.stat.exists
 
-- name: SERVER INSTALL - permissions
+# - name: SERVER INSTALL - permissions
+#   file:
+#     path: "{{ download_to_dir }}/{{ houdini_linux_filename }}"
+#     mode: u+rw,g+rw,o+rw
+#   become: true
+#   when: houdini_install_type == "server"
+
+- name: SERVER INSTALL - Permissions
   file:
     path: "{{ download_to_dir }}/{{ houdini_linux_filename }}"
     mode: u+rw,g+rw,o+rw
+    owner: "{{ variable_user }}"
+    group: syscontrol
   become: true
   when: houdini_install_type == "server"
+
 
 # - name: create dir
 #   file:
@@ -247,6 +269,13 @@
 ### END SERVER INSTALL
 
 # After install sync houdini download with bucket
+
+# - name: ensure permissions on the file allow access
+#   file:
+#     path: "{{ download_to_dir }}/{{ houdini_linux_filename }}"
+#     mode: u+rw,g+rw,o+rw
+#   become: true
+#   when: houdini_install_type == "server"
 
 - name: "ensure the houdini installer exists in the s3 bucket {{ installers_bucket }} Push if it doesn't."
   s3_sync:

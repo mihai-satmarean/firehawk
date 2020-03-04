@@ -9,7 +9,7 @@
   file:
     path: /prod/tmp
     state: directory
-    mode: u=rwX,g=rwX
+    mode: 1777
     owner: deadlineuser
     group: syscontrol
   become: yes
