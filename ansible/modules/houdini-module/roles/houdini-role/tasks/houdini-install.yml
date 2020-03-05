@@ -114,7 +114,7 @@
     msg:  "{{ houdini_install_out.stdout }}"
   when: houdini_install_type != "server" and houdini_version_item.houdini_auto_version
 
-- name: Permissions
+- name: NODE/WORKSTATION INSTALL - Permissions on zip file - node/workstation
   file:
     path: "{{ download_to_dir }}/{{ houdini_linux_filename }}"
     mode: u+rw,g+rw,o+rw
@@ -123,7 +123,7 @@
   become: true
   when: houdini_install_type != "server"
 
-- name: Install Houdini with python script - specific existing version from s3 bucket
+- name: NODE/WORKSTATION INSTALL - Install Houdini with python script - specific existing version from s3 bucket
   shell: |
     cd /opt/houdini_install_script/
     . /opt/houdini_install_script/exit_test.sh
@@ -140,7 +140,7 @@
     msg:  "{{ houdini_install_out.stdout }}"
   when: houdini_install_type != "server" and not houdini_version_item.houdini_auto_version
 
-- name: "setup licensing mode will write to /opt/hfs{{ houdini_version_item.houdini_major_version }}/houdini/Licensing.opt"
+- name: "NODE/WORKSTATION INSTALL - setup licensing mode will write to /opt/hfs{{ houdini_version_item.houdini_major_version }}/houdini/Licensing.opt"
   shell: |
     cd /opt/hfs{{ houdini_version_item.houdini_major_version }}
     sudo sed -i '/licensingMode = sesinetd/s/^# //g' /opt/hfs{{ houdini_version_item.houdini_major_version }}/houdini/Licensing.opt
@@ -150,7 +150,7 @@
   become: true
   when: houdini_install_type != "server"
 
-- name: setup licensing server ip as deadline user will write to $HOME/.sesi_licenses.pref
+- name: NODE/WORKSTATION INSTALL - setup licensing server ip as deadline user will write to $HOME/.sesi_licenses.pref
   shell: |
     cd /opt/hfs{{ houdini_version_item.houdini_major_version }}
     source ./houdini_setup
@@ -188,10 +188,10 @@
 #   become: true
 #   when: houdini_install_type == "server"
 
-- name: SERVER INSTALL - Permissions
+- name: SERVER INSTALL - Permissions on zip file
   file:
     path: "{{ download_to_dir }}/{{ houdini_linux_filename }}"
-    mode: u+rw,g+rw,o+rw
+    mode: u=rw,g=rw,o=r
     owner: "{{ variable_user }}"
     group: syscontrol
   become: true
@@ -227,15 +227,16 @@
     dir={{ houdini_linux_filename | regex_replace('.tar.gz$', '') }}
     cd {{ download_to_dir }}
     sudo tar -xvf {{ houdini_linux_filename }} -C "{{ houdini_linux_filename | regex_replace('.tar.gz$', '') }}" --strip-components 1
+    ls -ltriah
   register: houdini_install_out
   become_user: "{{ variable_user }}"
   become: true
   when: houdini_install_type == "server"
 
 
-- name: SERVER INSTALL - Permissions
+- name: SERVER INSTALL - Permissions on installer
   file:
-    path: "{{ download_to_dir }}/{{ houdini_linux_filename }}/houdini.install"
+    path: "{{ download_to_dir }}/{{ houdini_linux_filename | regex_replace('.tar.gz$', '') }}/houdini.install"
     mode: u=rX,g=rX,o=r
     owner: "{{ variable_user }}"
     group: syscontrol
