@@ -156,7 +156,7 @@
     sudo sed -i '/licensingMode = sesinetd/s/^# //g' /opt/hfs{{ houdini_version_item.houdini_major_version }}/houdini/Licensing.opt
     sudo cat /opt/hfs{{ houdini_version_item.houdini_major_version }}/houdini/Licensing.opt
   register: houdini_hserver_out
-  become_user: "{{ variable_user }}"
+  # become_user: "{{ variable_user }}"
   become: true
   when: houdini_install_type != "server"
 
