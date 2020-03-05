@@ -10,8 +10,8 @@
     path: /prod/tmp
     state: directory
     mode: 1777
-    owner: deadlineuser
-    group: syscontrol
+    owner: root
+    group: root
   become: yes
 
 - name: ansible distro

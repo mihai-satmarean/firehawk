@@ -103,7 +103,7 @@
     . /opt/houdini_install_script/exit_test.sh
     sudo python /opt/houdini_install_script/houdini_install.py -u '{{ sesi_username }}' -p '{{ sesi_password }}' -i /opt/houdini -b {{ houdini_version_item.houdini_build }} -t {{ download_to_dir }} -q false; exit_test
   register: houdini_install_out
-  no_log: true
+  # no_log: true
   become_user: "{{ variable_user }}"
   become: true
   when: houdini_version_item.houdini_auto_version
@@ -113,6 +113,16 @@
 - debug:
     msg:  "{{ houdini_install_out.stdout }}"
   when: houdini_install_type != "server" and houdini_version_item.houdini_auto_version
+
+- name: "Recursively find files in {{ download_to_dir }}"
+  find:
+    paths: "{{ download_to_dir }}"
+    recurse: yes
+
+- name: Recursively find files in /opt/houdini_install_script/
+  find:
+    paths: /opt/houdini_install_script/
+    recurse: yes
 
 - name: NODE/WORKSTATION INSTALL - Permissions on zip file - node/workstation
   file:
