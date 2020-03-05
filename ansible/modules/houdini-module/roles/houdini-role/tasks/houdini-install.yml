@@ -104,7 +104,7 @@
     sudo python /opt/houdini_install_script/houdini_install.py -u '{{ sesi_username }}' -p '{{ sesi_password }}' -i /opt/houdini -b {{ houdini_version_item.houdini_build }} -t {{ download_to_dir }} -q false; exit_test
   register: houdini_install_out
   # no_log: true
-  become_user: "{{ variable_user }}"
+  # become_user: "{{ variable_user }}"
   become: true
   when: houdini_version_item.houdini_auto_version
   failed_when:
@@ -140,7 +140,7 @@
     sudo python /opt/houdini_install_script/houdini_install.py -u '{{ sesi_username }}' -p '{{ sesi_password }}' -i /opt/houdini -b {{ houdini_version_item.houdini_build }} -t {{ download_to_dir }} -q false -f {{ houdini_linux_filename }}; exit_test
   register: houdini_install_out
   no_log: true
-  become_user: "{{ variable_user }}"
+  # become_user: "{{ variable_user }}"
   become: true
   when: houdini_install_type != "server" and not houdini_version_item.houdini_auto_version
   failed_when:
