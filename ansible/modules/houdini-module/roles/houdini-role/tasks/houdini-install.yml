@@ -292,10 +292,12 @@
 
 # After install sync houdini download with bucket
 
-- name: Ensure permissions on the file allow access for upload to s3.
+- name: "Ensure permissions on the file allow access for upload to s3 for {{ variable_user }} and group syscontrol"
   file:
     path: "{{ download_to_dir }}/{{ houdini_linux_filename }}"
     mode: u+rw,g+rw,o+rw
+    owner: "{{ variable_user }}"
+    group: syscontrol
   become: true
   # when: houdini_install_type == "server"
 
@@ -306,6 +308,7 @@
     include: "{{ houdini_linux_filename }}"
     region: "{{ aws_region }}"
     mode: push
-  become: false
+  become_user: "{{ variable_user }}"
+  # become: false
   tags:
     - sync_installers
