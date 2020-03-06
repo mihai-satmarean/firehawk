@@ -139,6 +139,9 @@ if [[ "$test_vm" = false ]] ; then
         # to manually enter an ecnrypted variable in you configuration use:
         # firehawksecret=$(echo -n "test some input that will be encrypted and stored as an env var" | ansible-vault encrypt_string --vault-id $vault_key --stdin-name firehawksecret | base64 -w 0)
         # that variable can be extracted here if specified
+        echo "Aquire firehawksecret..."
+        echo "vault_key $vault_key"
+        echo "firehawksecret $firehawksecret"
         password=$(./scripts/ansible-encrypt.sh --vault-id $vault_key --decrypt $firehawksecret)
         if [[ -z "$password" ]]; then
             echo "ERROR: unable to extract password from defined firehawksecret.  Either remove the firehawksecret variable, or debugging will be required for automation to continue."
