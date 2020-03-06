@@ -152,7 +152,7 @@ fi
 
 echo "ansiblecontrol Vagrant box in $ansiblecontrol_box"
 echo "firehawkgateway Vagrant box in $firehawkgateway_box"
-vagrant up; exit_test.sh
+vagrant up; exit_test
 
 if [ "$test_vm" = false ] ; then
     # vagrant reload
@@ -188,7 +188,7 @@ if [ "$test_vm" = false ] ; then
     if [[ ! -z "$hostname" && ! -z "$port" && ! -z "$TF_VAR_envtier" ]]; then
         # use expect to pipe through the password aquired initially.
         echo "...Logging in to Vagrant host"
-        ./scripts/expect-firehawk.sh $hostname $port --$TF_VAR_envtier $password; exit_test.sh
+        ./scripts/expect-firehawk.sh $hostname $port --$TF_VAR_envtier $password; exit_test
     fi
 fi
 
