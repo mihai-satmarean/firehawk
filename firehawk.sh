@@ -160,12 +160,10 @@ vagrant up; exit_test
 if [ "$test_vm" = false ] ; then
     # vagrant reload
     echo "Vagrant SSH config:"
-    vagrant ssh-config
     n=0; retries=100
     until [ $n -ge $retries ]
     do
-    echo "Vagrant SSH config ansiblecontrol:"
-    vagrant ssh-config ansiblecontrol && break  # substitute your command here
+    vagrant ssh-config && break  # substitute your command here
     n=$[$n+1]
     sleep 15
     done
