@@ -292,12 +292,12 @@
 
 # After install sync houdini download with bucket
 
-# - name: ensure permissions on the file allow access
-#   file:
-#     path: "{{ download_to_dir }}/{{ houdini_linux_filename }}"
-#     mode: u+rw,g+rw,o+rw
-#   become: true
-#   when: houdini_install_type == "server"
+- name: Ensure permissions on the file allow access for upload to s3.
+  file:
+    path: "{{ download_to_dir }}/{{ houdini_linux_filename }}"
+    mode: u+rw,g+rw,o+rw
+  become: true
+  # when: houdini_install_type == "server"
 
 - name: "ensure the houdini installer exists in the s3 bucket {{ installers_bucket }} Push if it doesn't."
   s3_sync:
