@@ -114,16 +114,6 @@
     msg:  "{{ houdini_install_out.stdout }}"
   when: houdini_install_type != "server" and houdini_version_item.houdini_auto_version
 
-- name: "Recursively find files in {{ download_to_dir }}"
-  find:
-    paths: "{{ download_to_dir }}"
-    recurse: yes
-
-- name: Recursively find files in /opt/houdini_install_script/
-  find:
-    paths: /opt/houdini_install_script/
-    recurse: yes
-
 - name: NODE/WORKSTATION INSTALL - Permissions on zip file - node/workstation
   file:
     path: "{{ download_to_dir }}/{{ houdini_linux_filename }}"
