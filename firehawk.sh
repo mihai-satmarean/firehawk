@@ -117,6 +117,13 @@ parse_opts () {
 }
 parse_opts "$@"
 
+# This is the directory of the current script
+SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+SCRIPTDIR=$(to_abs_path $SCRIPTDIR)
+printf "\n...checking scripts directory at $SCRIPTDIR\n\n"
+# source an exit test to bail if non zero exit code is produced.
+. $SCRIPTDIR/scripts/exit_test.sh
+
 # if not buildinging a package (.box file) and we specify a box file, then it must be the basis to start from
 # else if we are building a package, it will be a post process .
 
@@ -145,7 +152,7 @@ fi
 
 echo "ansiblecontrol Vagrant box in $ansiblecontrol_box"
 echo "firehawkgateway Vagrant box in $firehawkgateway_box"
-vagrant up
+vagrant up; exit_test.sh
 
 if [ "$test_vm" = false ] ; then
     # vagrant reload
@@ -181,7 +188,7 @@ if [ "$test_vm" = false ] ; then
     if [[ ! -z "$hostname" && ! -z "$port" && ! -z "$TF_VAR_envtier" ]]; then
         # use expect to pipe through the password aquired initially.
         echo "...Logging in to Vagrant host"
-        ./scripts/expect-firehawk.sh $hostname $port --$TF_VAR_envtier $password
+        ./scripts/expect-firehawk.sh $hostname $port --$TF_VAR_envtier $password; exit_test.sh
     fi
 fi
 
