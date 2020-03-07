@@ -378,10 +378,14 @@ source_vars () {
         fi
         # We use a local key and a password to encrypt and decrypt data.  no operation can occur without both.  in this case we decrypt first without password and then with the password.
         
-        # temp test.  this should normally be a condition
-        vault_command="ansible-vault view --vault-id $vault_key --vault-id $vault_key@scripts/ansible-encrypt.sh $var_file"
-        
-        # vault_command="ansible-vault view --vault-id $vault_key --vault-id $vault_key@prompt $var_file"
+        # If the encrypted secret is passed as an environment variable, then secrets can be passed after the secret itself is decrypted by the key.
+        if [[ ! -z "$firehawksecret" ]]; then
+            echo "...Using firehawksecret encrypted env var to decrypt instead of user input."
+            vault_command="ansible-vault view --vault-id $vault_key --vault-id $vault_key@scripts/ansible-encrypt.sh $var_file"
+        else
+            echo "Prompt user for password:"
+            vault_command="ansible-vault view --vault-id $vault_key --vault-id $vault_key@prompt $var_file"
+        fi
         
 
         if [[ $encrypt_mode != "none" ]]; then
