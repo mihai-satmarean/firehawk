@@ -63,6 +63,8 @@ Vagrant.configure(2) do |config|
                 # allow ssh access as deploy user
                 # node.vm.provision "shell", inline: "mkdir -p /home/deployuser/.ssh; chown -R deployuser:deployuser /home/deployuser/.ssh; chmod 700 /home/deployuser/.ssh"
                 node.vm.provision "shell", inline: "cp -fr /home/vagrant/.ssh /home/deployuser/; chown -R deployuser:deployuser /home/deployuser/.ssh; chown deployuser:deployuser /home/deployuser/.ssh/authorized_keys"
+                ### Install yq to query yaml
+                node.vm.provision "shell", inline: "sudo snap install yq"
             end
             # Allow deployuser to have passwordless sudo
             node.vm.synced_folder ".", "/vagrant", create: true, owner: "vagrant", group: "vagrant"
@@ -119,8 +121,6 @@ Vagrant.configure(2) do |config|
                 node.vm.provision "shell", inline: "export DEBIAN_FRONTEND=noninteractive; sudo apt-get install -y sshpass"
                 ### Install Ansible Block ###
                 node.vm.provision "shell", inline: "export DEBIAN_FRONTEND=noninteractive; sudo apt-get install -y software-properties-common"
-                ### Install yq to query yaml
-                node.vm.provision "shell", inline: "sudo snap install yq"
                 
                 if selected_ansible_version == 'latest'
                     node.vm.provision "shell", inline: "echo 'installing latest version of ansible with apt-get'"
