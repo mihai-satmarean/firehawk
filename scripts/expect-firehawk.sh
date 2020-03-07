@@ -26,13 +26,11 @@ set timeout -1
 spawn ./scripts/firehawk-ssh.sh $hostname $port $tier
 match_max 100000
 log_user 1
-#stty echo
+
 expect {
     "Vault password (/secrets/keys/*):" {
-		stty -echo
         send $password\r
         expect eof
-		stty echo
     }
     eof {}
 }
