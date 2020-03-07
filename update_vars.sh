@@ -14,8 +14,19 @@ BLUE='\033[0;34m' # Blue Text
 NC='\033[0m' # No Color        
 # the directory of the current script
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
 export TF_VAR_firehawk_path=$SCRIPTDIR
-export TF_VAR_secrets_path=$($TF_VAR_firehawk_path/../secrets)
+function to_abs_path {
+    local target="$1"
+    if [ "$target" == "." ]; then
+        echo "$(pwd)"
+    elif [ "$target" == ".." ]; then
+        echo "$(dirname "$(pwd)")"
+    else
+        echo "$(cd "$(dirname "$1")"; pwd)/$(basename "$1")"
+    fi
+}
+export TF_VAR_secrets_path="$(to_abs_path $TF_VAR_firehawk_path/../secrets)"
 
 # source an exit test to bail if non zero exit code is produced.
 . $TF_VAR_firehawk_path/scripts/exit_test.sh
@@ -146,17 +157,6 @@ vault () {
         printf "\n${RED}ERROR: valid modes for encrypt are:\nencrypt, decrypt or none. Enforcing encrypt mode as default.${NC}\n"
         export encrypt_mode='encrypt'
         failed=true
-    fi
-}
-
-function to_abs_path {
-    local target="$1"
-    if [ "$target" == "." ]; then
-        echo "$(pwd)"
-    elif [ "$target" == ".." ]; then
-        echo "$(dirname "$(pwd)")"
-    else
-        echo "$(cd "$(dirname "$1")"; pwd)/$(basename "$1")"
     fi
 }
 
