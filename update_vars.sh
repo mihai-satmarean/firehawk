@@ -360,8 +360,6 @@ source_vars () {
         fi
     fi
 
-
-
     if [ "$var_modified_date" == "$file_modified_date" ] && [ ! -z "$var_modified_date" ] && [[ "$encrypt_mode" != "decrypt" ]] && [[ $encrypt_required == false ]]; then
         printf "\n${BLUE}Skipping source ${var_file_basename}: last time this var file was sourced the modified date matches the current file.  No need to source the file again.${NC}\n"
     else
@@ -499,7 +497,6 @@ source_vars () {
             [[ "$i" =~ ^#.*$ ]] && continue
             export $i
         done
-
 
         # # Determine your current public ip for security groups.
 
