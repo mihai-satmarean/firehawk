@@ -70,6 +70,7 @@ parse_opts () {
                         ;;
                     encrypt)
                         encrypt=true
+                        ;;
                     *)
                         if [ "$OPTERR" = 1 ] && [ "${optspec:0:1}" != ":" ]; then
                             echo "Unknown option --${OPTARG}" >&2
