@@ -15,10 +15,10 @@ NC='\033[0m' # No Color
 # the directory of the current script
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+# These paths and vars are necesary to locating other scripts.
+export TF_VAR_firehawk_path=$SCRIPTDIR; exit_test
 # source an exit test to bail if non zero exit code is produced.
 . $TF_VAR_firehawk_path/scripts/exit_test.sh
-
-export TF_VAR_firehawk_path=$SCRIPTDIR; exit_test
 function to_abs_path {
     local target="$1"
     if [ "$target" == "." ]; then
