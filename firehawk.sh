@@ -172,9 +172,9 @@ if [ "$test_vm" = false ] ; then
 
     # AFter Vagrant Hosts are up, take the SSH keys and store them in the keys folder for general use.
     ansiblecontrol_key=$(vagrant ssh-config ansiblecontrol | grep -oP "^  IdentityFile \K.*")
-    cp -f $ansiblecontrol_key ../secrets/keys/ansible_control_private_key
+    cp -f $ansiblecontrol_key $TF_VAR_secrets_path/keys/ansible_control_private_key
     firehawkgateway_key=$(vagrant ssh-config firehawkgateway | grep -oP "^  IdentityFile \K.*")
-    cp -f $firehawkgateway_key ../secrets/keys/firehawkgateway_private_key
+    cp -f $firehawkgateway_key $TF_VAR_secrets_path/keys/firehawkgateway_private_key
 
     hostname=$(vagrant ssh-config ansiblecontrol | grep -Po '.*HostName\ \K(\d*.\d*.\d*.\d*)')
     port=$(vagrant ssh-config ansiblecontrol | grep -Po '.*Port\ \K(\d*)')
@@ -187,7 +187,7 @@ if [ "$test_vm" = false ] ; then
     if [[ ! -z "$hostname" && ! -z "$port" && ! -z "$TF_VAR_envtier" ]]; then
         # use expect to pipe through the password aquired initially.
         echo "...Logging in to Vagrant host"
-        ssh deployuser@$hostname -p $port -i ../secrets/keys/ansible_control_private_key -o StrictHostKeyChecking=no -tt "export firehawksecret=${firehawksecret}; /deployuser/scripts/init-firehawk.sh --$TF_VAR_envtier"; exit_test
+        ssh deployuser@$hostname -p $port -i $TF_VAR_secrets_path/keys/ansible_control_private_key -o StrictHostKeyChecking=no -tt "export firehawksecret=${firehawksecret}; /deployuser/scripts/init-firehawk.sh --$TF_VAR_envtier"; exit_test
     fi
 fi
 
