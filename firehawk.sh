@@ -155,9 +155,6 @@ echo "Vagrant box ansiblecontrol in $ansiblecontrol_box"
 echo "Vagrant box firehawkgateway in $firehawkgateway_box"
 
 
-if [[ "$TF_VAR_init" = true ]] ; then
-    vagrant destroy -f
-fi
 vagrant up; exit_test
 
 if [ "$test_vm" = false ] ; then
