@@ -385,7 +385,7 @@ source_vars () {
             ls -ltriah $TF_VAR_firehawk_path/scripts/ansible-encrypt.sh
             
             echo "output decrypt REMOVE THIS"
-            ansible-vault view --vault-id $vault_key --vault-id $vault_key@$TF_VAR_firehawk_path/scripts/ansible-encrypt.sh $var_file
+            echo "ansible-vault view --vault-id $vault_key --vault-id $vault_key@$TF_VAR_firehawk_path/scripts/ansible-encrypt.sh $var_file"
             
             vault_command="ansible-vault view --vault-id $vault_key --vault-id $vault_key@$TF_VAR_firehawk_path/scripts/ansible-encrypt.sh $var_file"
         else
