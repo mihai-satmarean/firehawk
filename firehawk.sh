@@ -187,7 +187,7 @@ if [ "$test_vm" = false ] ; then
     if [[ ! -z "$hostname" && ! -z "$port" && ! -z "$TF_VAR_envtier" ]]; then
         # use expect to pipe through the password aquired initially.
         echo "...Logging in to Vagrant host"
-        ./scripts/expect-firehawk.sh $hostname $port --$TF_VAR_envtier $password; exit_test
+        ssh deployuser@$hostname -p $port -i ../secrets/keys/ansible_control_private_key -o StrictHostKeyChecking=no -t "export firehawksecret=${firehawksecret}; /deployuser/scripts/init-firehawk.sh --$TF_VAR_envtier"; exit_test
     fi
 fi
 
