@@ -382,12 +382,12 @@ source_vars () {
         if [[ ! -z "$firehawksecret" ]]; then
             echo "...Using firehawksecret encrypted env var to decrypt instead of user input."
             echo "Check existance of $TF_VAR_firehawk_path/scripts/ansible-encrypt.sh"
-            ls -ltriah $TF_VAR_firehawk_path/scripts/ansible-encrypt.sh
+            ls -ltriah scripts/ansible-encrypt.sh
             
-            echo "output decrypt REMOVE THIS"
-            echo "ansible-vault view --vault-id $vault_key --vault-id $vault_key@$TF_VAR_firehawk_path/scripts/ansible-encrypt.sh $var_file"
+            echo "Decrypt:"
+            echo "ansible-vault view --vault-id $vault_key --vault-id $vault_key@scripts/ansible-encrypt.sh $var_file"
             
-            vault_command="ansible-vault view --vault-id $vault_key --vault-id $vault_key@$TF_VAR_firehawk_path/scripts/ansible-encrypt.sh $var_file"
+            vault_command="ansible-vault view --vault-id $vault_key --vault-id $vault_key@scripts/ansible-encrypt.sh $var_file"
         else
             echo "Prompt user for password:"
             vault_command="ansible-vault view --vault-id $vault_key --vault-id $vault_key@prompt $var_file"

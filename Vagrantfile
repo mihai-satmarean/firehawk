@@ -119,6 +119,8 @@ Vagrant.configure(2) do |config|
                 node.vm.provision "shell", inline: "export DEBIAN_FRONTEND=noninteractive; sudo apt-get install -y sshpass"
                 ### Install Ansible Block ###
                 node.vm.provision "shell", inline: "export DEBIAN_FRONTEND=noninteractive; sudo apt-get install -y software-properties-common"
+                ### Install yq to query yaml
+                node.vm.provision "shell", inline: "sudo snap install yq"
                 
                 if selected_ansible_version == 'latest'
                     node.vm.provision "shell", inline: "echo 'installing latest version of ansible with apt-get'"

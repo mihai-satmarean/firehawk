@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # This scripts encrypts an input hidden from the shell and base 64 encodes it so it can be stored as an environment variable
 # Optionally can also decrypt an environment variable
@@ -96,11 +96,11 @@ if [[ "$encrypt" = true ]]; then
     unset REPLY
     echo $secret
 elif [[ "$decrypt" = true ]]; then
-    result=$(echo $encrypted_secret | base64 -d | /var/lib/snapd/snap/bin/yq r - "$secret_name" | ansible-vault decrypt --vault-id $vault_key)
+    result=$(echo $encrypted_secret | base64 -d | yq r - "$secret_name" | ansible-vault decrypt --vault-id $vault_key)
     echo $result
 else
     # if no arg is passed to encrypt or decrypt, then we a ssume the function will decrypt the firehawksecret env var
     encrypted_secret="${firehawksecret}"
-    result=$(echo $encrypted_secret | base64 -d | /var/lib/snapd/snap/bin/yq r - "$secret_name" | ansible-vault decrypt --vault-id $vault_key)
+    result=$(echo $encrypted_secret | base64 -d | yq r - "$secret_name" | ansible-vault decrypt --vault-id $vault_key)
     echo $result
 fi
