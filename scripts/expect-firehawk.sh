@@ -7,9 +7,7 @@ log_user 0
 set hostname [lindex $argv 0];
 set port [lindex $argv 1];
 set tier [lindex $argv 2];
-stty -echo
 set password [lindex $argv 3];
-stty echo
 
 set force_conservative 0; # set to 1 to force conservative mode even if script wasn't run conservatively originally
 if {$force_conservative} {
