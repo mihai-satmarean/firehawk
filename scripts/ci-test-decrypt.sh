@@ -6,5 +6,4 @@ echo "vault_id $vault_key"
 result=$(./scripts/ansible-encrypt.sh --vault-id $vault_key --decrypt $testsecret)
 echo $result
 if [[ "$result" != "this is a test secret" ]]; then exit 1; fi
-echo $firehawksecret
 if [[ -z "$firehawksecret" ]]; then echo "ERROR unable to extract password from defined firehawksecret"; exit 1; fi

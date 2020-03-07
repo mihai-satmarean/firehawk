@@ -5,6 +5,10 @@
 # Don't store command history.
 unset HISTFILE
 
+if [[ ! -z "$firehawksecret" ]]; then
+  echo "Vagrant: firehawksecret $firehawksecret"
+fi
+
 # trap ctrl-c and call ctrl_c()
 trap ctrl_c INT
 function ctrl_c() {

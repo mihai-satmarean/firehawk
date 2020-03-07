@@ -124,10 +124,10 @@ printf "\n...checking scripts directory at $SCRIPTDIR\n\n"
 # source an exit test to bail if non zero exit code is produced.
 . $SCRIPTDIR/scripts/exit_test.sh
 
-# if not buildinging a package (.box file) and we specify a box file, then it must be the basis to start from
+# If not buildinging a package (.box file) and we specify a box file, then it must be the basis to start from
 # else if we are building a package, it will be a post process .
 
-# if box file in is defined, then vagrant will use this file in place of the standard image.
+# If box file in is defined, then vagrant will use this file in place of the standard image.
 if [[ ! -z "$box_file_in" ]] ; then
     source ./update_vars.sh --$TF_VAR_envtier --box-file-in "$box_file_in" --vagrant
 else
@@ -140,8 +140,6 @@ if [[ "$test_vm" = false ]] ; then
         # firehawksecret=$(echo -n "test some input that will be encrypted and stored as an env var" | ansible-vault encrypt_string --vault-id $vault_key --stdin-name firehawksecret | base64 -w 0)
         # that variable can be extracted here if specified
         echo "Aquire firehawksecret..."
-        echo "vault_key $vault_key"
-        echo "firehawksecret $firehawksecret"
         password=$(./scripts/ansible-encrypt.sh --vault-id $vault_key --decrypt $firehawksecret)
         if [[ -z "$password" ]]; then
             echo "ERROR: unable to extract password from defined firehawksecret.  Either remove the firehawksecret variable, or debugging will be required for automation to continue."
@@ -153,8 +151,8 @@ if [[ "$test_vm" = false ]] ; then
     fi
 fi
 
-echo "ansiblecontrol Vagrant box in $ansiblecontrol_box"
-echo "firehawkgateway Vagrant box in $firehawkgateway_box"
+echo "Vagrant box ansiblecontrol in $ansiblecontrol_box"
+echo "Vagrant box firehawkgateway in $firehawkgateway_box"
 vagrant up; exit_test
 
 if [ "$test_vm" = false ] ; then
