@@ -29,6 +29,8 @@ IFS='
 '
 optspec=":hv-:t:"
 
+encrypt=false
+
 parse_opts () {
     local OPTIND
     OPTIND=0
@@ -66,6 +68,8 @@ parse_opts () {
                         opt=${OPTARG%=$val}
                         decrypt_func
                         ;;
+                    encrypt)
+                        encrypt=true
                     *)
                         if [ "$OPTERR" = 1 ] && [ "${optspec:0:1}" != ":" ]; then
                             echo "Unknown option --${OPTARG}" >&2
@@ -85,12 +89,17 @@ parse_opts () {
 }
 parse_opts "$@"
 
-if [[ "$decrypt" = true ]]; then
-    result=$(echo $encrypted_secret | base64 -d | /var/lib/snapd/snap/bin/yq r - "$secret_name" | ansible-vault decrypt --vault-id $vault_key)
-    echo $result
-else
+if [[ "$encrypt" = true ]]; then
     read -s -p "Enter the string to encrypt: `echo $'\n> '`";
     secret=$(echo -n "$REPLY" | ansible-vault encrypt_string --vault-id $vault_key --stdin-name $secret_name | base64 -w 0)
     unset REPLY
     echo $secret
+elif [[ "$decrypt" = true ]]; then
+    result=$(echo $encrypted_secret | base64 -d | /var/lib/snapd/snap/bin/yq r - "$secret_name" | ansible-vault decrypt --vault-id $vault_key)
+    echo $result
+else
+    # if no arg is passed to encrypt or decrypt, then we a ssume the function will decrypt the firehawksecret env var
+    encrypted_secret="${firehawksecret}"
+    result=$(echo $encrypted_secret | base64 -d | /var/lib/snapd/snap/bin/yq r - "$secret_name" | ansible-vault decrypt --vault-id $vault_key)
+    echo $result
 fi

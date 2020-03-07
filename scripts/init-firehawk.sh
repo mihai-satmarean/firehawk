@@ -5,9 +5,10 @@
 # Don't store command history.
 unset HISTFILE
 
-echo "Vagrant: firehawksecret:$firehawksecret"
 if [[ ! -z "$firehawksecret" ]]; then
   echo "Vagrant: firehawksecret:$firehawksecret"
+else
+  echo "Vagrant: No firehawk secret env var provided, will prompt user for input."
 fi
 
 # trap ctrl-c and call ctrl_c()

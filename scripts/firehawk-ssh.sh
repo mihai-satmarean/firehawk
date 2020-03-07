@@ -17,4 +17,4 @@ ls $TF_VAR_firehawk_path/scripts
 
 echo "firehawksecret=$firehawksecret"
 # test pass through var firehawksecret=$firehawksecret
-ssh deployuser@$1 -p $2 -i ../secrets/keys/ansible_control_private_key -o StrictHostKeyChecking=no -t "export firehawksecret=$firehawksecret; /deployuser/scripts/init-firehawk.sh $3"; exit_test
+ssh deployuser@$1 -p $2 -i ../secrets/keys/ansible_control_private_key -o StrictHostKeyChecking=no -t "export firehawksecret=${firehawksecret}; /deployuser/scripts/init-firehawk.sh $3"; exit_test

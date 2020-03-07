@@ -377,7 +377,12 @@ source_vars () {
             return 88
         fi
         # We use a local key and a password to encrypt and decrypt data.  no operation can occur without both.  in this case we decrypt first without password and then with the password.
-        vault_command="ansible-vault view --vault-id $vault_key --vault-id $vault_key@prompt $var_file"
+        
+        # temp test.  this should normally be a condition
+        vault_command="ansible-vault view --vault-id $vault_key --vault-id $vault_key@scripts/ansible-encrypt.sh $var_file"
+        
+        # vault_command="ansible-vault view --vault-id $vault_key --vault-id $vault_key@prompt $var_file"
+        
 
         if [[ $encrypt_mode != "none" ]]; then
             #check if a vault key exists.  if it does, then install can continue automatically.
