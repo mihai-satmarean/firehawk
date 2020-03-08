@@ -32,7 +32,7 @@ function to_abs_path {
 export TF_VAR_secrets_path="$(to_abs_path $TF_VAR_firehawk_path/../secrets)"; exit_test
 
 mkdir -p $TF_VAR_firehawk_path/tmp/
-mkdir -p $TF_VAR_firehawk_path/../secrets/keys
+mkdir -p $TF_VAR_secrets_path/keys
 
 # The template will be updated by this script
 save_template=true
@@ -340,7 +340,7 @@ source_vars () {
     # After a var file is source we also store the modified date of that file as a dynamic variable name.  if the modified date of the file on the next run is identical to the environment variable, then it doesn't need to be sourced again.  This allows detection of the contents being changed and sourcing the file if true.
 
     var_file_basename="$(echo $var_file | tr '-' '_')"
-    var_file="$(to_abs_path $TF_VAR_firehawk_path/../secrets/$var_file)"; exit_test
+    var_file="$(to_abs_path $TF_VAR_secrets_path/$var_file)"; exit_test
 
     echo "...Test modified date"
     file_modified_date=$(date -r $var_file)
@@ -367,10 +367,10 @@ source_vars () {
         printf "\n${GREEN}Will source ${var_file_basename}. encrypt_mode = $encrypt_mode ${NC}\n"
         # set vault key location based on envtier dev/prod
         if [[ "$TF_VAR_envtier" = 'dev' ]]; then
-            export vault_key="$(to_abs_path $TF_VAR_firehawk_path/../secrets/keys/$TF_VAR_vault_key_name_dev)"
+            export vault_key="$(to_abs_path $TF_VAR_secrets_path/keys/$TF_VAR_vault_key_name_dev)"
             echo "set vault_key $vault_key"
         elif [[ "$TF_VAR_envtier" = 'prod' ]]; then
-            export vault_key="$(to_abs_path $TF_VAR_firehawk_path/../secrets/keys/$TF_VAR_vault_key_name_prod)"
+            export vault_key="$(to_abs_path $TF_VAR_secrets_path/keys/$TF_VAR_vault_key_name_prod)"
             echo "set vault_key $vault_key"
         else 
             printf "\n...${RED}WARNING: envtier evaluated to no match for dev or prod.  Inspect update_vars.sh to handle this case correctly.${NC}\n"
@@ -536,10 +536,10 @@ source_vars () {
         # lastly update the vault key path
         # set vault key location based on envtier dev/prod
         if [[ "$TF_VAR_envtier" = 'dev' ]]; then
-            export vault_key="$(to_abs_path $TF_VAR_firehawk_path/../secrets/keys/$TF_VAR_vault_key_name_dev)"
+            export vault_key="$(to_abs_path $TF_VAR_secrets_path/keys/$TF_VAR_vault_key_name_dev)"
             echo "set vault_key $vault_key"
         elif [[ "$TF_VAR_envtier" = 'prod' ]]; then
-            export vault_key="$(to_abs_path $TF_VAR_firehawk_path/../secrets/keys/$TF_VAR_vault_key_name_prod)"
+            export vault_key="$(to_abs_path $TF_VAR_secrets_path/keys/$TF_VAR_vault_key_name_prod)"
             echo "set vault_key $vault_key"
         else 
             printf "\n...${RED}WARNING: envtier evaluated to no match for dev or prod.  Inspect update_vars.sh to handle this case correctly.${NC}\n"
