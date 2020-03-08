@@ -53,7 +53,7 @@
     . /opt/houdini_install_script/exit_test.sh
     python /opt/houdini_install_script/houdini_install.py -u {{ sesi_username }} -p {{ sesi_password }} -i /opt/houdini -b {{ houdini_version_item.houdini_build }} -t {{ download_to_dir }} -q true -f {{ houdini_linux_filename }}; exit_test
   register: houdini_query_out
-  #no_log: true
+  no_log: true
   become: true
   when: houdini_version_item.houdini_auto_version
 
@@ -103,8 +103,7 @@
     . /opt/houdini_install_script/exit_test.sh
     sudo python /opt/houdini_install_script/houdini_install.py -u '{{ sesi_username }}' -p '{{ sesi_password }}' -i /opt/houdini -b {{ houdini_version_item.houdini_build }} -t {{ download_to_dir }} -q false; exit_test
   register: houdini_install_out
-  # no_log: true
-  # become_user: "{{ variable_user }}"
+  no_log: true
   become: true
   when: houdini_version_item.houdini_auto_version
   failed_when:
@@ -130,7 +129,6 @@
     sudo python /opt/houdini_install_script/houdini_install.py -u '{{ sesi_username }}' -p '{{ sesi_password }}' -i /opt/houdini -b {{ houdini_version_item.houdini_build }} -t {{ download_to_dir }} -q false -f {{ houdini_linux_filename }}; exit_test
   register: houdini_install_out
   no_log: true
-  # become_user: "{{ variable_user }}"
   become: true
   when: houdini_install_type != "server" and not houdini_version_item.houdini_auto_version
   failed_when:
@@ -146,7 +144,6 @@
     sudo sed -i '/licensingMode = sesinetd/s/^# //g' /opt/hfs{{ houdini_version_item.houdini_major_version }}/houdini/Licensing.opt
     sudo cat /opt/hfs{{ houdini_version_item.houdini_major_version }}/houdini/Licensing.opt
   register: houdini_hserver_out
-  # become_user: "{{ variable_user }}"
   become: true
   when: houdini_install_type != "server"
 
@@ -181,13 +178,6 @@
   become: true
   when: houdini_install_type == "server" and hserver_check.stat.exists
 
-# - name: SERVER INSTALL - permissions
-#   file:
-#     path: "{{ download_to_dir }}/{{ houdini_linux_filename }}"
-#     mode: u+rw,g+rw,o+rw
-#   become: true
-#   when: houdini_install_type == "server"
-
 - name: SERVER INSTALL - Permissions on zip file
   file:
     path: "{{ download_to_dir }}/{{ houdini_linux_filename }}"
@@ -196,17 +186,6 @@
     group: syscontrol
   become: true
   when: houdini_install_type == "server"
-
-
-# - name: create dir
-#   file:
-#     path: "{{ download_to_dir }}/{{ houdini_linux_filename | regex_replace('.tar.gz$', '') }}"
-#     state: directory
-#     mode: u=rwX,g=rwx
-#     owner: "{{ variable_user }}"
-#   become_user: "{{ variable_user }}"
-#   become: true
-#   when: houdini_install_type == "server"
 
 - name: SERVER INSTALL - make dir.
   shell: |
@@ -243,7 +222,7 @@
   become: true
   when: houdini_install_type == "server"
 
-# - name: Unarchive a file with extra options
+# - name: Unarchive a file with extra options # this has some problems with idempotency and its slow.
 #   unarchive:
 #     src: "{{ download_to_dir }}/{{ houdini_linux_filename }}"
 #     dest: "{{ download_to_dir }}/{{ houdini_linux_filename | regex_replace('.tar.gz$', '') }}"
@@ -289,7 +268,6 @@
     owner: "{{ variable_user }}"
     group: syscontrol
   become: true
-  # when: houdini_install_type == "server"
 
 - name: "ensure the houdini installer exists in the s3 bucket {{ installers_bucket }} Push if it doesn't."
   s3_sync:
@@ -299,6 +277,5 @@
     region: "{{ aws_region }}"
     mode: push
   become_user: "{{ variable_user }}"
-  # become: false
   tags:
     - sync_installers
