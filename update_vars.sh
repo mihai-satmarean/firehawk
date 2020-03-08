@@ -381,12 +381,10 @@ source_vars () {
         # If the encrypted secret is passed as an environment variable, then secrets can be passed after the secret itself is decrypted by the key.
         if [[ ! -z "$firehawksecret" ]]; then
             echo "...Using firehawksecret encrypted env var to decrypt instead of user input."
-            echo "Check existance of $TF_VAR_firehawk_path/scripts/ansible-encrypt.sh"
-            ls -ltriah scripts/ansible-encrypt.sh
-            
-            echo "Decrypt:"
-            echo "ansible-vault view --vault-id $vault_key --vault-id $vault_key@scripts/ansible-encrypt.sh $var_file"
-            
+            if [ ! -f scripts/ansible-encrypt.sh ]; then
+                echo "FILE NOT FOUND: scripts/ansible-encrypt.sh"
+                echo "Check existance of $TF_VAR_firehawk_path/scripts/ansible-encrypt.sh"
+            fi
             vault_command="ansible-vault view --vault-id $vault_key --vault-id $vault_key@scripts/ansible-encrypt.sh $var_file"
         else
             echo "Prompt user for password:"
