@@ -9,7 +9,7 @@ resource "null_resource" "init-awscli-deadlinedb-firehawk" {
       set -x
       cd /deployuser
       echo "...Check keys permissions"
-      ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      ls -ltriah /secrets/keys; if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       export storage_user_access_key_id=${var.storage_user_access_key_id}
       echo "storage_user_access_key_id=$storage_user_access_key_id"
       export storage_user_secret=${var.storage_user_secret}
@@ -17,30 +17,30 @@ resource "null_resource" "init-awscli-deadlinedb-firehawk" {
       # Test keybase / pgp decryption options
       ./scripts/keybase-pgp-test.sh; exit_test
       # Install aws cli for user with s3 credentials.  root user only needs s3 access.  in future consider provisining a replacement access key for vagrant with less permissions, and remove the root account keys?
-      ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      ls -ltriah /secrets/keys; if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       ansible-playbook -i "$TF_VAR_inventory" ansible/aws-cli-ec2-install.yaml -v --extra-vars "variable_host=ansible_control variable_user=root"; exit_test
-      ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      ls -ltriah /secrets/keys; if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       ansible-playbook -i "$TF_VAR_inventory" ansible/aws-cli-ec2-install.yaml -v --extra-vars "variable_host=ansible_control variable_user=deployuser"; exit_test
-      ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      ls -ltriah /secrets/keys; if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       ansible-playbook -i "$TF_VAR_inventory" ansible/aws-cli-ec2-install.yaml -v --extra-vars "variable_host=firehawkgateway variable_user=deployuser"; exit_test
-      ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      ls -ltriah /secrets/keys; if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       ansible-playbook -i "$TF_VAR_inventory" ansible/newuser_deadlineuser.yaml -v --extra-vars "variable_host=firehawkgateway variable_connect_as_user=deployuser variable_user=deadlineuser" --tags 'newuser,onsite-install'; exit_test
-      ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      ls -ltriah /secrets/keys; if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       ansible-playbook -i "$TF_VAR_inventory" ansible/aws-cli-ec2-install.yaml -v --extra-vars "variable_host=firehawkgateway variable_connect_as_user=deployuser variable_user=deadlineuser"; exit_test
-      ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      ls -ltriah /secrets/keys; if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       # Add deployuser user to group syscontrol.   this is local and wont apply until after reboot, so try to avoid since we dont want to reboot the ansible control.
       ansible-playbook -i "$TF_VAR_inventory" ansible/newuser_deadlineuser.yaml -v --extra-vars 'variable_user=deployuser' --tags 'onsite-install'; exit_test
-      ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      ls -ltriah /secrets/keys; if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       # Add user to syscontrol without the new user tag, it will just add a user to the syscontrol group
       ansible-playbook -i "$TF_VAR_inventory" ansible/newuser_deadlineuser.yaml -v --extra-vars 'variable_host=firehawkgateway variable_connect_as_user=deployuser variable_user=deployuser' --tags 'onsite-install'; exit_test
-      ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      ls -ltriah /secrets/keys; if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       if [[ "$TF_VAR_install_deadline" == true ]]; then
         # Install deadline
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-db-install.yaml -v; exit_test
         # First db check
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-db-check.yaml -v; exit_test
       fi
-      ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      ls -ltriah /secrets/keys; if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
 EOT
 }
 }
@@ -63,39 +63,38 @@ resource "null_resource" "init-routes-houdini-license-server" {
     interpreter = ["/bin/bash", "-c"]
     command = <<EOT
       . /deployuser/scripts/exit_test.sh
-      set -x
       cd /deployuser
-      ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      ls -ltriah /secrets/keys; if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       if [[ "$TF_VAR_install_deadline" == true ]]; then
         # check db
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-db-check.yaml -v; exit_test
-        ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+        ls -ltriah /secrets/keys; if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
         # custom events auto assign groups to slaves on startup, eg slaveautoconf
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-repository-custom-events.yaml; exit_test
-        ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+        ls -ltriah /secrets/keys; if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       fi
       # configure onsite NAS mounts to firehawkgateway
       ansible-playbook -i "$TF_VAR_inventory" ansible/node-centos-mounts.yaml --extra-vars "variable_host=firehawkgateway variable_user=deployuser softnas_hosts=none" --tags 'local_install_onsite_mounts'; exit_test
-      ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      ls -ltriah /secrets/keys; if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       # ssh will be killed from the previous script because users were added to a new group and this will not update unless your ssh session is restarted.
       # login again and continue...
       if [[ "$TF_VAR_install_houdini" == true ]]; then
         # install houdini with the same procedure as on render nodes and workstations, and initialise the licence server on this system.
         ansible-playbook -i "$TF_VAR_inventory" ansible/modules/houdini-module/houdini-module.yaml -v --extra-vars "sesi_username=$TF_VAR_sesi_username sesi_password=$TF_VAR_sesi_password variable_host=firehawkgateway variable_connect_as_user=deployuser variable_user=deployuser houdini_install_type=server" --skip-tags "sync_scripts"; exit_test
-        ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+        ls -ltriah /secrets/keys; if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       fi
       # ensure an aws pem key exists for ssh into cloud nodes
       ansible-playbook -i "$TF_VAR_inventory" ansible/aws-new-key.yaml; exit_test
-      ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      ls -ltriah /secrets/keys; if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       # configure routes to opposite environment for licence server to communicate if in dev environment
       ansible-playbook -i "$TF_VAR_inventory" ansible/firehawkgateway-update-routes.yaml; exit_test
       [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable'
-      ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      ls -ltriah /secrets/keys; if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       if [[ "$TF_VAR_install_deadline" == true ]]; then
         #check db
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-db-check.yaml -v; exit_test
       fi
-      ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      ls -ltriah /secrets/keys; if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
 EOT
 }
 }
@@ -108,9 +107,8 @@ resource "null_resource" "init-aws-local-workstation" {
     interpreter = ["/bin/bash", "-c"]
     command = <<EOT
       . /deployuser/scripts/exit_test.sh
-      set -x
       cd /deployuser
-      [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       export storage_user_access_key_id=${var.storage_user_access_key_id}
       echo "storage_user_access_key_id=$storage_user_access_key_id"
       export storage_user_secret=${var.storage_user_secret}
@@ -136,7 +134,7 @@ resource "null_resource" "init-aws-local-workstation" {
         #check db
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-db-check.yaml -v; exit_test
       fi
-      [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
 EOT
 }
 }
@@ -151,14 +149,14 @@ resource "null_resource" "install-deadline-local-workstation" {
       . /deployuser/scripts/exit_test.sh
       set -x
       cd /deployuser
-      [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       if [[ "$TF_VAR_install_deadline" == true ]]; then
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-db-check.yaml -v; exit_test
         # configure deadline on the local workstation with the keys from this install to run deadline slave and monitor
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-worker-install.yaml --tags "onsite-install" --extra-vars "variable_host=workstation1 variable_user=deadlineuser variable_connect_as_user=deployuser"; exit_test
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-db-check.yaml -v; exit_test
       fi
-      [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
 EOT
 }
 }
@@ -173,7 +171,7 @@ resource "null_resource" "install-houdini-local-workstation" {
       . /deployuser/scripts/exit_test.sh
       set -x
       cd /deployuser
-      [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       if [[ "$TF_VAR_install_deadline" == true ]]; then
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-db-check.yaml -v; exit_test
       fi
@@ -183,7 +181,7 @@ resource "null_resource" "install-houdini-local-workstation" {
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-db-check.yaml -v; exit_test
         ansible-playbook -i "$TF_VAR_inventory" ansible/node-centos-ffmpeg.yaml -v --extra-vars "variable_host=workstation1 variable_user=deadlineuser variable_connect_as_user=deployuser"; exit_test
       fi
-      [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
+      if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
 EOT
 }
 }
