@@ -89,6 +89,7 @@ resource "null_resource" "init-routes-houdini-license-server" {
       ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
       # configure routes to opposite environment for licence server to communicate if in dev environment
       ansible-playbook -i "$TF_VAR_inventory" ansible/firehawkgateway-update-routes.yaml; exit_test
+      [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable'
       ls -ltriah /secrets/keys; [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
       if [[ "$TF_VAR_install_deadline" == true ]]; then
         #check db

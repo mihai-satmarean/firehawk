@@ -2,7 +2,7 @@
 # example local install
 # ansible-playbook -i "$TF_VAR_inventory" ansible/init-centos-aws-cli.yaml -v --extra-vars "ansible_ssh_user=deadlineuser variable_host=workstation1 variable_user=deadlineuser hostname=workstation1 ansible_become_pass=somepass"
 
-# make sure with local hosts in ubuntu that you are ussing ssh correctly - https://docs.ansible.com/ansible/latest/user_guide/intro_getting_started.html
+# make sure with local hosts in ubuntu that you are ussing ssh correctly
 # $ ssh-agent bash
 # $ ssh-add ~/.ssh/id_rsa
 
