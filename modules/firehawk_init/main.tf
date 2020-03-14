@@ -9,6 +9,7 @@ resource "null_resource" "init-awscli-deadlinedb-firehawk" {
       set -x
       cd /deployuser
       echo "...Check keys permissions"
+      [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
       ls -ltriah /secrets/keys
       export storage_user_access_key_id=${var.storage_user_access_key_id}
       echo "storage_user_access_key_id=$storage_user_access_key_id"
@@ -32,6 +33,7 @@ resource "null_resource" "init-awscli-deadlinedb-firehawk" {
         # First db check
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-db-check.yaml -v; exit_test
       fi
+      [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
 EOT
 }
 }
@@ -56,6 +58,7 @@ resource "null_resource" "init-routes-houdini-license-server" {
       . /deployuser/scripts/exit_test.sh
       set -x
       cd /deployuser
+      [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
       if [[ "$TF_VAR_install_deadline" == true ]]; then
         # check db
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-db-check.yaml -v; exit_test
@@ -78,6 +81,7 @@ resource "null_resource" "init-routes-houdini-license-server" {
         #check db
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-db-check.yaml -v; exit_test
       fi
+      [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
 EOT
 }
 }
@@ -92,6 +96,7 @@ resource "null_resource" "init-aws-local-workstation" {
       . /deployuser/scripts/exit_test.sh
       set -x
       cd /deployuser
+      [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
       export storage_user_access_key_id=${var.storage_user_access_key_id}
       echo "storage_user_access_key_id=$storage_user_access_key_id"
       export storage_user_secret=${var.storage_user_secret}
@@ -117,6 +122,7 @@ resource "null_resource" "init-aws-local-workstation" {
         #check db
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-db-check.yaml -v; exit_test
       fi
+      [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
 EOT
 }
 }
@@ -131,12 +137,14 @@ resource "null_resource" "install-deadline-local-workstation" {
       . /deployuser/scripts/exit_test.sh
       set -x
       cd /deployuser
+      [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
       if [[ "$TF_VAR_install_deadline" == true ]]; then
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-db-check.yaml -v; exit_test
         # configure deadline on the local workstation with the keys from this install to run deadline slave and monitor
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-worker-install.yaml --tags "onsite-install" --extra-vars "variable_host=workstation1 variable_user=deadlineuser variable_connect_as_user=deployuser"; exit_test
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-db-check.yaml -v; exit_test
       fi
+      [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
 EOT
 }
 }
@@ -151,6 +159,7 @@ resource "null_resource" "install-houdini-local-workstation" {
       . /deployuser/scripts/exit_test.sh
       set -x
       cd /deployuser
+      [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
       if [[ "$TF_VAR_install_deadline" == true ]]; then
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-db-check.yaml -v; exit_test
       fi
@@ -160,6 +169,7 @@ resource "null_resource" "install-houdini-local-workstation" {
         ansible-playbook -i "$TF_VAR_inventory" ansible/deadline-db-check.yaml -v; exit_test
         ansible-playbook -i "$TF_VAR_inventory" ansible/node-centos-ffmpeg.yaml -v --extra-vars "variable_host=workstation1 variable_user=deadlineuser variable_connect_as_user=deployuser"; exit_test
       fi
+      [[ -w /secrets/keys/id_ssh_rsa_dev ]] && echo 'file is writable' && exit 1
 EOT
 }
 }
