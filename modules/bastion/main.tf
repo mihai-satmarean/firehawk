@@ -169,6 +169,7 @@ resource "null_resource" "provision_bastion" {
       cd /deployuser
       echo "Check keys permissions"
       ls -ltriah /secrets/keys
+      if [[ -w /secrets/keys/id_ssh_rsa_dev ]]; then echo 'file is writable'; exit 1; fi
       ansible-playbook -i "$TF_VAR_inventory" ansible/ssh-add-public-host.yaml -v --extra-vars "public_ip=${local.public_ip} public_address=${local.bastion_address} bastion_address=${local.bastion_address} set_bastion=true"; exit_test
 EOT
 
