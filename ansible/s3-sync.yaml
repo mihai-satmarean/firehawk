@@ -86,7 +86,7 @@
     shell: |
       # set -x
       cd {{ volume_path }}/{{ item.item.path }}
-      aws s3 sync . s3://{{ bucket }}/{{ item.item.path }} {{ item.item.s3_push_args | default( default_s3_push_args ) }}
+      aws s3 sync . s3://{{ bucket }}/{{ item.item.path }} {{ item.item.s3_push_args | default( default_s3_push_args ) }} --no-progress
     become_user: deployuser
     when: item.stat.exists
     with_items:
@@ -115,7 +115,7 @@
         export AWS_DEFAULT_REGION={{ aws_region }}
       # set -x
       cd {{ volume_path }}/{{ item.path }}
-      aws s3 sync s3://{{ bucket }}/{{ item.path }} . --include "*"
+      aws s3 sync s3://{{ bucket }}/{{ item.path }} . --include "*" --no-progress
     become_user: deployuser
     with_items:
       - "{{ remote_push_paths }}"
@@ -231,7 +231,7 @@
         export AWS_DEFAULT_REGION={{ aws_region }}
       # set -x
       cd {{ volume_path }}/{{ item.path }}
-      aws s3 sync s3://{{ bucket }}/{{ item.path }} . --include "*"
+      aws s3 sync s3://{{ bucket }}/{{ item.path }} . --include "*" --no-progress
     become_user: deadlineuser
     with_items:
       - "{{ sync_paths }}"
@@ -285,7 +285,7 @@
         export AWS_DEFAULT_REGION={{ aws_region }}
       # set -x
       cd {{ volume_path }}/{{ item.item.path }}
-      aws s3 sync . s3://{{ bucket }}/{{ item.item.path }} {{ item.item.s3_push_args | default( default_s3_push_args ) }}
+      aws s3 sync . s3://{{ bucket }}/{{ item.item.path }} {{ item.item.s3_push_args | default( default_s3_push_args ) }} --no-progress
     become_user: "{{ variable_user }}"
     register: sync_remote_push_output
     when: item.stat.exists
