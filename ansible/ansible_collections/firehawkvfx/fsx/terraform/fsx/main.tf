@@ -207,7 +207,6 @@ resource "aws_fsx_lustre_file_system" "fsx_storage" {
 
 locals {
   id = element( concat( aws_fsx_lustre_file_system.fsx_storage.*.id, list("") ), 0)
-  # id = element( aws_fsx_lustre_file_system.fsx_storage.*.id, 0 )
 }
 
 output "id" {
@@ -221,7 +220,7 @@ output "network_interface_ids" {
   value = aws_fsx_lustre_file_system.fsx_storage.*.network_interface_ids
 }
 
-# Terraform provider API does list the primary interface in the correct order to obtain it.  so we use a custom data source to aquire the primary interface
+# Terraform provider API does not list the primary interface in the correct order to obtain it.  so we use a custom data source to aquire the primary interface
 
 data "external" "primary_interface_id" { # Why cant we use triggers here?
   count = local.fsx_enabled
@@ -234,11 +233,7 @@ data "external" "primary_interface_id" { # Why cant we use triggers here?
 }
 
 locals {
-  # primary_interface = data.external.primary_interface_id.result["primary_interface"]
-  # primary_interface = element( concat( data.external.primary_interface_id.*.result, map( "primary_interface", "" ), 0 ))["primary_interface"]
   primary_interface = lookup( element( concat( data.external.primary_interface_id.*.result, list( map( "primary_interface", "" ) ) ), 0), "primary_interface", "" )
-  # lookup(map, key, default)
-  # primary_interface = element( concat( data.aws_network_interface.fsx_primary_interface.*.private_ip, list("") ), 0 )
 }
 
 output "primary_interface" {
