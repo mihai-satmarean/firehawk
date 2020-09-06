@@ -173,11 +173,12 @@ module "bastion" {
 
 module "terraform-aws-vault" {
   source          = "./modules/terraform-aws-vault"
+  use_default_vpc = false
+  vpc_tags = local.common_tags # tags used to find the vpc.  this optionally allows vault to be bootstrapped onto another deployment
 }
 
 output "vpn_private_ip" {
   value = module.vpc.vpn_private_ip
-  vpc_tags = local.common_tags # tags used to find the vpc.  this optionally allows vault to be bootstrapped onto another deployment
 }
 
 # if a new image is detected, TF will update the spot template and spot plugin json settings
