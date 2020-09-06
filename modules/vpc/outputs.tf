@@ -52,5 +52,5 @@ output "vpn_private_ip" {
 
 output "vpc_tags" {
   depends_on = [ aws_vpc.main ]
-  value = vpc_tags
+  value = local.vpc_tags
 }
