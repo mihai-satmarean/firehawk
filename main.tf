@@ -171,6 +171,10 @@ module "bastion" {
   common_tags = local.common_tags
 }
 
+module "terraform-aws-vault" {
+  source          = "./modules/terraform-aws-vault"
+}
+
 output "vpn_private_ip" {
   value = module.vpc.vpn_private_ip
 }
