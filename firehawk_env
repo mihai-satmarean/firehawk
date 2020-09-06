@@ -1,0 +1,160 @@
+#! /usr/bin/env python
+'''
+validate config and export env vars.  eg:
+IFS= ; export $(./firehawk_env --tier dev --resourcetier grey --export)
+'''
+
+import sys
+import yaml
+import json
+import os
+import collections.abc
+import argparse
+import fileinput
+from contextlib import redirect_stdout
+
+parser = argparse.ArgumentParser(description='Process some integers.')
+# parser.add_argument('strings', metavar='S', type=str, nargs=2,
+#                     help='The key ( eg: my_key= ) and value ( eg: somevalue ) to replace any existing value with.')
+parser.add_argument("-t", "--tier", type=str,
+                    help="Set tier to dev / prod")
+parser.add_argument("-r", "--resourcetier", type=str,
+                    help="Set resourcetier to grey / green / blue")
+parser.add_argument("-e", "--export", action='store_true',
+                    help="Set resourcetier to grey / green / blue")
+
+args = parser.parse_args()
+
+
+if args.export:
+    redirect_null = open(os.devnull, 'w')
+    sys.stdout = redirect_null
+
+
+print( args.export )
+
+def update(d, u):
+    for k, v in u.items():
+        if isinstance(v, collections.abc.Mapping):
+            d[k] = update(d.get(k, {}), v)
+        else:
+            d[k] = v
+    return d
+
+def touch(path):
+    with open(path, 'a'):
+        os.utime(path, None)
+
+config_defaults_path = 'config/config_defaults.yaml'
+config_path = '../secrets/config.yaml'
+
+if not os.path.exists(config_path): touch(config_path)
+
+with open(config_path) as file: config = yaml.safe_load(file)
+
+objects = ['tier', 'variable']
+
+def get_identifier(item):
+    identifier = None
+    object_type = None
+    matching_objects = [ x for x in item if x in objects]
+    if len( matching_objects ) != 1:
+        sys.stderr.write("Couldn\'t find a unique match for object in item: {}".format(item))
+        sys.exit(1)
+    object_type = matching_objects[0]
+    if object_type == 'tier':
+        identifier = item['tier']['resource_tier']
+    elif object_type == 'variable':
+        identifier = item['variable']['variable_name']
+    return identifier, object_type
+
+config_result = {}
+
+with open(config_defaults_path) as file: # update the user's config from the defaults, preserving existing values and adding missing entries.
+    defaults = yaml.safe_load(file)
+    for item in defaults:
+        print(yaml.dump(item, allow_unicode=True, sort_keys=False, default_flow_style=False))
+        identifier, object_type = get_identifier(item)
+        match_in_config = []
+        if config is not None and len(config) > 0:
+            match_in_config = [ x for x in config if (get_identifier(x)) == (identifier, object_type)]
+        
+        print("match_in_config", match_in_config)
+
+        if len(match_in_config) > 1:
+            sys.stderr.write("More than one matching object in config for: {}".format(item))
+            sys.exit(1)
+        elif len(match_in_config) == 1:
+            config_dict = match_in_config[0].copy()
+            print('\nUpdating existing entry: {}'.format(config_dict))
+            print('\nWith: {}\n'.format(item))
+            update(config_dict, item)
+        else:
+            config_dict = item.copy()
+
+        if object_type not in config_result:
+            config_result[object_type] = {}
+        config_result[object_type][identifier] = config_dict
+
+config_result_list = []
+
+
+
+for object_type in objects:
+    for item in config_result[object_type]:
+        config_result_list.append( config_result[object_type][item] )
+
+with open(config_path, 'w') as file:
+    for item in config_result_list:
+        yaml.dump([item], file, allow_unicode=True, sort_keys=False, default_flow_style=False)
+        file.write("\n")
+
+def get_value_from_key(key, dict): # aquire a value considering precedence of the tier
+    match = None
+    if 'tier' in dict:
+        if args.resourcetier in dict['tier'] and key in dict['tier'][args.resourcetier]: # grey green blue are matched first to define a value - they are more specific.
+            subdict = dict['tier'][args.resourcetier]
+            match = subdict[key]
+            print(key, 'using resourcetier', args.resourcetier, match, subdict)
+        elif args.tier in dict['tier'] and key in dict['tier'][args.tier]: # dev and prod are matched next
+            subdict = dict['tier'][args.tier]
+            match = subdict[key]
+            print(key, 'using tier', args.tier, match, subdict)
+            # print(match)
+    if match is None and key in dict: # lastly the root of the dict is used
+        match = dict[key]
+        print(key, 'using root', match)
+    return match
+
+
+
+# construct key value pairs for env
+result_env = {}
+
+for item in config_result['variable']:
+    dict = config_result['variable'][item]['variable']
+
+    var_names = []
+    variable_name = get_value_from_key('variable_name', dict)
+    if variable_name: var_names.append(variable_name)
+    tier_variable_name = get_value_from_key('tier_variable_name', dict) # some vars may be assigned multiple names for them all to be available in the environment        
+    if tier_variable_name: var_names.append(tier_variable_name)
+
+    if len(var_names) == 0:
+        sys.stderr.write("No variable names aquired for dict: {}".format(dict))
+        sys.exit(1)
+
+    value = get_value_from_key('value', dict)
+    if value is None: value = get_value_from_key('default_value', dict)
+
+    if value is None: 
+        sys.stderr.write("No value defined for variables: {}".format(var_names))
+        sys.exit(1)
+
+    for var_name in var_names:
+        result_env[var_name] = value
+
+if args.export: # output values as env vars
+    sys.stdout = sys.__stdout__ # to enable stdout
+    for key, value in result_env.items():
+        sys.stdout.write( '{}={} '.format(key, repr(value) ) )
