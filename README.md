@@ -45,7 +45,7 @@ With each of the accounts:
 - Create a user by your real name, and follow the instructions AWS provides for best practice.
 - Ensure MFA is enabled, MFA is best done with a seperate device / phone. **Setup 2 factor authentication.  Do not skip this, any account with a login should have it.**
 - Use a good password manager for passwords, ensure it has MFA for its ability to be accessed as well.  (I decided to use 1Password in a web browser for Linux and Mac OS- I'm not endorsed by this company, just sharing some of my own choices).
-- Setup budget notifications.  Set a number you are willing to spend per month, and setup email notifications for every 20% of that budget.  The notifications are there in case you forget to do the next step...
+- DO NOT SKIP THIS STEP: Setup budget notifications.  Set a number you are willing to spend per month, and setup email notifications for every 20% of that budget.  The notifications are there in case you forget to do the next step...
 - [Check your AWS costs](https://console.aws.amazon.com/cost-management/) for a daily breakdown of what you spend, and do it every day as you learn.  It's a good habit to do it at the start of every day.
 
 Best practices for security and best practice around secrets management are important.  Feel free to notify us if you observe security implementation that could be improved.
