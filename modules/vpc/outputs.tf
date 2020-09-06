@@ -49,3 +49,8 @@ output "private_route_table_ids" {
 output "vpn_private_ip" {
   value = module.vpn.private_ip
 }
+
+output "vpc_tags" {
+  depends_on = [ aws_vpc.main ]
+  value = vpc_tags
+}

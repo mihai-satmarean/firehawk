@@ -174,7 +174,7 @@ module "bastion" {
 module "terraform-aws-vault" {
   source          = "./modules/terraform-aws-vault"
   use_default_vpc = false
-  vpc_tags = local.common_tags # tags used to find the vpc.  this optionally allows vault to be bootstrapped onto another deployment
+  vpc_tags = module.vpc.vpc_tags # tags used to find the vpc.  this optionally allows vault to be bootstrapped onto another deployment
 }
 
 output "vpn_private_ip" {

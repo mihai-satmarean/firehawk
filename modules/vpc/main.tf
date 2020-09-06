@@ -21,6 +21,7 @@ locals {
     role = "vpc"
     Name = local.name
   }
+  vpc_tags = merge(var.common_tags, local.extra_tags, map("Name", format("%s", local.name)))
 }
 
 resource "aws_vpc" "main" {
@@ -31,7 +32,7 @@ resource "aws_vpc" "main" {
   enable_dns_support   = true
   enable_dns_hostnames = true
 
-  tags = merge(var.common_tags, local.extra_tags, map("Name", format("%s", local.name)))
+  tags = local.vpc_tags
 }
 
 resource "aws_vpc_dhcp_options" "main" {
