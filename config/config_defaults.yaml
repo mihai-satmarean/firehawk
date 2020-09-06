@@ -1,0 +1,56 @@
+- tier:
+    name: Green Tier
+    resource_tier: green
+    envtier: prod
+    description: The green tier is a set of resources used in production for a green/blue deployment
+    menu: none
+
+- tier:
+    name: Blue Tier
+    resource_tier: blue
+    envtier: prod
+    description: The blue tier is a set of resources used in production for a green/blue deployment
+    menu: none
+
+- tier:
+    name: Grey Tier
+    resource_tier: grey
+    envtier: dev
+    description: The grey tier is a set of resources used in developement for a green/blue deployment
+    menu: none
+
+- variable:
+    name: Private Domain Name
+    variable_name: TF_VAR_private_domain # the second item must be a unique identifier for the item.
+    description: The private prod domain name for your hosts.  This is required for the host names and fsx storage in a private network.  Launched Infrastructure will switch between different domains depending on the resource environment for isolation.
+    required: false
+    menu: settings/advanced
+    tier:
+      grey:
+        default_value: grey.openfirehawk.com
+        example: grey.mydomain.com
+      green:
+        default_value: green.openfirehawk.com
+        example: green.mydomain.com
+      blue:
+        default_value: blue.openfirehawk.com
+        example: blue.mydomain.com
+
+- variable:
+    name: AWS Account ID
+    variable_name: AWS_ACCOUNT_ID
+    description: The Account ID found on the accounts page in the AWS console to use for your dev/prod environments.  You must use a seperate account for your dev and testing environment than for your production environment.
+    example: 132513513561
+    required: true # The user must define this entry.
+    vault:
+      store: true # Store the user defined value in the vault. by default it will be stored at the path: {variable name}_{tier} 
+      default_allow_env: true # Some secrets need to be made available as env vars.  This is set in the vault only.  Changing this value here will not alter the behaviour on an existing vault value.
+    menu: settings/secrets
+    tier: # alternate values can be provided based on the tier
+      dev:
+        tier_variable_name: AWS_ACCOUNT_ID_dev # A custom name based on the tier can also be made available as an env var in addition the the primary variable name.
+      prod:
+        tier_variable_name: AWS_ACCOUNT_ID_prod
+        
+# during config, the user will enter a value for each tier if provided, or all.
+# during sourceing the yaml is flattened
