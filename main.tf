@@ -177,6 +177,7 @@ module "terraform-aws-vault" {
 
 output "vpn_private_ip" {
   value = module.vpc.vpn_private_ip
+  vpc_tags = local.common_tags # tags used to find the vpc.  this optionally allows vault to be bootstrapped onto another deployment
 }
 
 # if a new image is detected, TF will update the spot template and spot plugin json settings
