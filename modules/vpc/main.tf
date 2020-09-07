@@ -345,7 +345,7 @@ variable "route_public_domain_name" {
 
 
 module "vpn" {
-  create_vpn = var.create_vpn
+  create_vpn = var.create_vpc
 
   source = "../tf_aws_openvpn"
 
@@ -353,7 +353,7 @@ module "vpn" {
 
   #start vpn will initialise service locally to connect
   #start_vpn = false
-  igw_id = var.igw_id
+  igw_id = local.aws_internet_gateway
 
   #create_openvpn = "${var.create_openvpn}"
   public_subnets  = var.public_subnets
@@ -361,18 +361,18 @@ module "vpn" {
 
   name = "openvpn_ec2_pipeid${lookup(var.common_tags, "pipelineid", "0")}"
 
-  private_domain_name = var.private_domain_name
+  private_domain_name = var.private_domain
 
   # VPC Inputs
-  vpc_id             = var.vpc_id
+  vpc_id             = local.vpc_id
   vpc_cidr           = var.vpc_cidr
   vpn_cidr           = var.vpn_cidr
   public_subnet_ids  = local.public_subnets
-  remote_vpn_ip_cidr = var.remote_vpn_ip_cidr
+  remote_vpn_ip_cidr = var.remote_ip_cidr
   remote_subnet_cidr = var.remote_subnet_cidr
 
-  private_route_table_ids = var.private_route_table_ids
-  public_route_table_ids = var.public_route_table_ids
+  private_route_table_ids = local.private_route_table_ids
+  public_route_table_ids = local.public_route_table_ids
 
   # EC2 Inputs
   aws_key_name       = var.aws_key_name
