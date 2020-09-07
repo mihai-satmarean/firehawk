@@ -173,12 +173,12 @@ module "bastion" {
   common_tags = local.common_tags
 }
 
-module "terraform-aws-vault" {
-  source          = "./modules/terraform-aws-vault"
-  use_default_vpc = false
-  vpc_tags = module.vpc.vpc_tags # tags used to find the vpc.  this optionally allows vault to be bootstrapped onto another deployment
-  subnet_tags = merge( map("area", "private"), map( "pipelineid", var.active_pipeline ) ) # TODO try using all common tags for consistency
-}
+# module "terraform-aws-vault" {
+#   source          = "./modules/terraform-aws-vault"
+#   use_default_vpc = false
+#   vpc_tags = module.vpc.vpc_tags # tags used to find the vpc.  this optionally allows vault to be bootstrapped onto another deployment
+#   subnet_tags = merge( map("area", "private"), map( "pipelineid", var.active_pipeline ) ) # TODO try using all common tags for consistency
+# }
 
 output "vpn_private_ip" {
   value = module.vpc.vpn_private_ip
