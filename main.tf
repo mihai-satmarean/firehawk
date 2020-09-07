@@ -34,6 +34,7 @@ locals {
     accountid    = data.aws_caller_identity.current.account_id
     terraform    = "true"
   }
+  name = "firehawk_${lookup(local.common_tags, "resourcetier", "0")}_pipeid${lookup(local.common_tags, "pipelineid", "0")}" # A common unique name for the dpeloyment
 }
 
 
@@ -126,6 +127,7 @@ module "vpc" {
   bastion_dependency = module.bastion.bastion_dependency
   # deadlinedb_complete = module.firehawk_init.deadlinedb_complete
 
+  vpc_name = local.name
   common_tags = local.common_tags
 }
 
@@ -175,6 +177,7 @@ module "terraform-aws-vault" {
   source          = "./modules/terraform-aws-vault"
   use_default_vpc = false
   vpc_tags = module.vpc.vpc_tags # tags used to find the vpc.  this optionally allows vault to be bootstrapped onto another deployment
+  subnet_tags = merge( map("area", "private"), map( "pipelineid", var.active_pipeline ) ) # TODO try using all common tags for consistency
 }
 
 output "vpn_private_ip" {

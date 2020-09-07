@@ -51,6 +51,11 @@ output "vpn_private_ip" {
 }
 
 output "vpc_tags" {
-  depends_on = [ aws_vpc.main ]
+  depends_on = [ aws_vpc.main, aws_subnet.private_subnet ]
   value = local.vpc_tags
+}
+
+output "subnet_names" {
+  depends_on = [ aws_vpc.main, aws_subnet.private_subnet ]
+  value = local.subnet_names
 }

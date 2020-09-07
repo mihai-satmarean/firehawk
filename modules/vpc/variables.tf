@@ -14,9 +14,9 @@ variable "enable_nat_gateway" {
   default = true
 }
 
-variable "create_vpc" {
-  default = true
-}
+variable "vpc_name" {}
+
+variable "create_vpc" { default = true }
 
 variable "create_openvpn" {
   default = true

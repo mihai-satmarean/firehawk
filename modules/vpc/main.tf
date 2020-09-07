@@ -16,12 +16,12 @@ resource "null_resource" "firehawk_init_dependency" {
 variable "common_tags" {}
 
 locals {
-  name = "firehawk_${lookup(var.common_tags, "resourcetier", "0")}_pipeid${lookup(var.common_tags, "pipelineid", "0")}"
+  name = var.vpc_name
   extra_tags = { 
     role = "vpc"
     Name = local.name
   }
-  vpc_tags = merge(var.common_tags, local.extra_tags, map("Name", format("%s", local.name)))
+  vpc_tags = merge(var.common_tags, local.extra_tags, map("Name", local.name))
 }
 
 resource "aws_vpc" "main" {
@@ -94,7 +94,20 @@ resource "aws_subnet" "public_subnet" {
 
   depends_on = [aws_internet_gateway.gw]
 
-  tags = merge(var.common_tags, local.extra_tags, map("Name", format("public%s_%s", count.index, local.name)))
+  tags = merge(var.common_tags, local.extra_tags, map("area", "public"), map("Name", format("public%s_%s", count.index, local.name)))
+}
+
+# variable "name_counts" {
+#   type    = map(number)
+#   default = {
+#     local.name = length( var.private_subnets )
+#   }
+# }
+
+locals {
+  subnet_names = [
+      for i in range( length( var.private_subnets ) ) : format("private%s_%s", i, local.name)
+    ]
 }
 
 resource "aws_subnet" "private_subnet" {
@@ -103,7 +116,7 @@ resource "aws_subnet" "private_subnet" {
 
   availability_zone = element( data.aws_availability_zones.available.names, count.index )
   cidr_block = element(var.private_subnets, count.index)
-  tags = merge(var.common_tags, local.extra_tags, map("Name", format("private%s_%s", count.index, local.name)))
+  tags = merge(var.common_tags, local.extra_tags, map("area", "private"), map("Name", format("private%s_%s", count.index, local.name)))
 }
 
 resource "aws_eip" "nat" { 
@@ -125,7 +138,7 @@ resource "aws_nat_gateway" "gw" { # We use a single nat gateway currently to sav
 resource "aws_route_table" "private" {
   count  = var.create_vpc ? 1 : 0
   vpc_id = local.vpc_id
-  tags = merge(var.common_tags, local.extra_tags, map("Name", "${local.name}_private"))
+  tags = merge(var.common_tags, local.extra_tags, map("area", "private"), map("Name", "${local.name}_private"))
 }
 
 resource "aws_route" "private_nat_gateway" {
