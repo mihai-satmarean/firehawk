@@ -89,8 +89,6 @@ variable "firehawk_init_dependency" {}
 variable "private_domain_name" {}
 
 module "openvpn" {
-  #source = "github.com/firehawkvfx/tf_aws_openvpn"
-
   create_vpn = var.create_vpn
 
   source = "../tf_aws_openvpn"

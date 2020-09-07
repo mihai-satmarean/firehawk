@@ -97,13 +97,6 @@ resource "aws_subnet" "public_subnet" {
   tags = merge(var.common_tags, local.extra_tags, map("area", "public"), map("Name", format("public%s_%s", count.index, local.name)))
 }
 
-# variable "name_counts" {
-#   type    = map(number)
-#   default = {
-#     local.name = length( var.private_subnets )
-#   }
-# }
-
 locals {
   subnet_names = [
       for i in range( length( var.private_subnets ) ) : format("private%s_%s", i, local.name)
@@ -298,46 +291,109 @@ variable "remote_subnet_cidr" {
 variable "route_public_domain_name" {
 }
 
+# module "vpn" {
+#   source = "../vpn"
+
+#   create_vpn = var.create_vpc
+
+#   aws_region = var.region
+
+#   route_public_domain_name = var.route_public_domain_name
+#   private_domain_name = var.private_domain
+
+#   # dummy attribute to force dependency on IGW.
+#   igw_id = local.aws_internet_gateway
+
+#   vpc_id   = local.vpc_id
+#   vpc_cidr = var.vpc_cidr
+
+#   #the cidr range that the vpn will assign to remote addresses within the vpc if routing.
+#   vpn_cidr           = var.vpn_cidr
+#   remote_subnet_cidr = var.remote_subnet_cidr
+
+#   private_route_table_ids = local.private_route_table_ids
+#   public_route_table_ids  = local.public_route_table_ids
+
+#   #the remote public address that will connect to the openvpn instance
+#   remote_vpn_ip_cidr = var.remote_ip_cidr
+#   public_subnet_ids  = local.public_subnets
+
+#   private_subnets = var.private_subnets
+#   public_subnets  = var.public_subnets
+
+#   #a provided route 53 zone id will be modified to have a subdomain to access vpn.  you will need to manually setup a route 53 zone for a domain with an ssl certificate.
+#   route_zone_id      = var.route_zone_id
+#   aws_key_name           = var.aws_key_name
+#   private_key        = file(var.aws_private_key_path)
+#   aws_private_key_path     = var.aws_private_key_path
+#   cert_arn           = var.cert_arn
+#   public_domain_name = var.public_domain_name
+#   openvpn_user       = var.openvpn_user
+#   openvpn_user_pw    = var.openvpn_user_pw
+#   openvpn_admin_user = var.openvpn_admin_user
+#   openvpn_admin_pw   = var.openvpn_admin_pw
+
+#   bastion_ip = var.bastion_ip
+#   bastion_dependency = var.bastion_dependency
+#   firehawk_init_dependency = var.firehawk_init_dependency
+
+#   #sleep will stop instances to save cost during idle time.
+#   sleep = var.sleep
+
+#   common_tags = var.common_tags
+# }
+
+
 module "vpn" {
-  source = "../vpn"
+  create_vpn = var.create_vpn
 
-  create_vpn = var.create_vpc
-
-  aws_region = var.region
+  source = "../tf_aws_openvpn"
 
   route_public_domain_name = var.route_public_domain_name
-  private_domain_name = var.private_domain
 
-  # dummy attribute to force dependency on IGW.
-  igw_id = local.aws_internet_gateway
+  #start vpn will initialise service locally to connect
+  #start_vpn = false
+  igw_id = var.igw_id
 
-  vpc_id   = local.vpc_id
-  vpc_cidr = var.vpc_cidr
+  #create_openvpn = "${var.create_openvpn}"
+  public_subnets  = var.public_subnets
+  private_subnets = var.private_subnets
 
-  #the cidr range that the vpn will assign to remote addresses within the vpc if routing.
+  name = "openvpn_ec2_pipeid${lookup(var.common_tags, "pipelineid", "0")}"
+
+  private_domain_name = var.private_domain_name
+
+  # VPC Inputs
+  vpc_id             = var.vpc_id
+  vpc_cidr           = var.vpc_cidr
   vpn_cidr           = var.vpn_cidr
+  public_subnet_ids  = local.public_subnets
+  remote_vpn_ip_cidr = var.remote_vpn_ip_cidr
   remote_subnet_cidr = var.remote_subnet_cidr
 
-  private_route_table_ids = local.private_route_table_ids
-  public_route_table_ids  = local.public_route_table_ids
+  private_route_table_ids = var.private_route_table_ids
+  public_route_table_ids = var.public_route_table_ids
 
-  #the remote public address that will connect to the openvpn instance
-  remote_vpn_ip_cidr = var.remote_ip_cidr
-  public_subnet_ids  = local.public_subnets
+  # EC2 Inputs
+  aws_key_name       = var.aws_key_name
+  private_key    = var.private_key
+  aws_private_key_path = var.aws_private_key_path
+  instance_type  = var.instance_type
 
-  private_subnets = var.private_subnets
-  public_subnets  = var.public_subnets
+  # Network Routing Inputs.  source destination checks are disable for nat gateways or routing on an instance.
+  source_dest_check = false
 
-  #a provided route 53 zone id will be modified to have a subdomain to access vpn.  you will need to manually setup a route 53 zone for a domain with an ssl certificate.
-  route_zone_id      = var.route_zone_id
-  aws_key_name           = var.aws_key_name
-  private_key        = file(var.aws_private_key_path)
-  aws_private_key_path     = var.aws_private_key_path
-  cert_arn           = var.cert_arn
+  # ELB Inputs
+  cert_arn = var.cert_arn
+
+  # DNS Inputs
   public_domain_name = var.public_domain_name
+  route_zone_id      = var.route_zone_id
+
+  # OpenVPN Inputs
   openvpn_user       = var.openvpn_user
   openvpn_user_pw    = var.openvpn_user_pw
-  openvpn_admin_user = var.openvpn_admin_user
+  openvpn_admin_user = var.openvpn_admin_user # Note: Don't choose "admin" username. Looks like it's already reserved.
   openvpn_admin_pw   = var.openvpn_admin_pw
 
   bastion_ip = var.bastion_ip
@@ -349,15 +405,3 @@ module "vpn" {
 
   common_tags = var.common_tags
 }
-
-# resource "null_resource" "dependency_vpc" {
-#   triggers = {
-#     vpc_id = local.vpc_id
-#   }
-# }
-
-# resource "null_resource" "dependency_vpn" {
-#   triggers = {
-#     vpn_id = module.vpn.id
-#   }
-# }

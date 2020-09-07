@@ -85,3 +85,7 @@ variable "bastion_ip" {
 }
 
 variable "bastion_dependency" {}
+
+variable "instance_type" {
+  default = "t3.micro"
+}
