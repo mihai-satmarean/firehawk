@@ -79,10 +79,9 @@ module "firehawk_init" {
 }
 
 module "vpc" {
-
-  firehawk_init_dependency = module.firehawk_init.init_awscli_complete
   source = "./modules/terraform-aws-vpc-vpn"
 
+  firehawk_init_dependency = module.firehawk_init.init_awscli_complete
   create_vpc = var.enable_vpc
 
   route_public_domain_name = var.route_public_domain_name
