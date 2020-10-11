@@ -83,14 +83,10 @@ module "vpc" {
 
   firehawk_init_dependency = module.firehawk_init.init_awscli_complete
   create_vpc = var.enable_vpc
-
   route_public_domain_name = var.route_public_domain_name
   private_domain = var.private_domain
-
-  #sleep will disable the nat gateway to save cost during idle time.
   sleep              = var.sleep
   enable_nat_gateway = var.enable_nat_gateway
-
   azs = var.azs
 
   private_subnets = [var.private_subnet1, var.private_subnet2]
@@ -99,20 +95,13 @@ module "vpc" {
   vpc_cidr = var.vpc_cidr
 
   #vpn variables
-
-  #the cidr range that the vpn will assign to remote addresses within the vpc if routing.
   vpn_cidr = var.vpn_cidr
-
-  #the remote public address that will connect to the openvpn instance and other public instances
   remote_ip_cidr = var.remote_ip_cidr
-
-  #the remote private cidr range of the subnet the openvpn client reside in.  used if you intend to use the client as a router / gateway for other nodes in your private network.
   remote_subnet_cidr = var.remote_subnet_cidr
 
   #a provided route 53 zone id will be modified to have a subdomain to access vpn.  you will need to manually setup a route 53 zone for a domain with an ssl certificate.
 
   aws_key_name           = var.aws_key_name
-  private_key        = file(var.aws_private_key_path)
   aws_private_key_path     = var.aws_private_key_path
   route_zone_id      = var.route_zone_id
   public_domain_name = var.public_domain
@@ -122,54 +111,12 @@ module "vpc" {
   openvpn_admin_user = var.openvpn_admin_user
   openvpn_admin_pw   = var.openvpn_admin_pw
 
-  bastion_ip         = module.bastion.public_ip
-  bastion_dependency = module.bastion.bastion_dependency
-  # deadlinedb_complete = module.firehawk_init.deadlinedb_complete
-
   vpc_name = local.name
   common_tags = local.common_tags
 }
 
 variable "node_skip_update" {
   default = false
-}
-
-module "bastion" {
-  source = "./modules/bastion"
-
-  create_vpc = var.enable_vpc
-
-  name = "bastion_pipeid${lookup(local.common_tags, "pipelineid", "0")}"
-
-  route_public_domain_name = var.route_public_domain_name
-
-  # region will determine the ami
-  region = var.aws_region
-
-  #options for gateway type are centos7 and pcoip
-  vpc_id                      = module.vpc.vpc_id
-  vpc_cidr                    = var.vpc_cidr
-  vpn_cidr                    = var.vpn_cidr
-  remote_ip_cidr              = var.remote_ip_cidr
-  public_subnet_ids           = module.vpc.public_subnets
-  public_subnets_cidr_blocks  = module.vpc.public_subnets_cidr_blocks
-  private_subnets_cidr_blocks = module.vpc.private_subnets_cidr_blocks
-  remote_subnet_cidr          = var.remote_subnet_cidr
-
-  aws_key_name       = var.aws_key_name
-  aws_private_key_path = var.aws_private_key_path
-  private_key    = file(var.aws_private_key_path)
-
-  route_zone_id      = var.route_zone_id
-  public_domain_name = var.public_domain
-
-  #skipping os updates will allow faster rollout for testing.
-  skip_update = var.node_skip_update
-
-  #sleep will stop instances to save cost during idle time.
-  sleep = var.sleep
-
-  common_tags = local.common_tags
 }
 
 module "terraform-aws-vault" {
@@ -348,7 +295,7 @@ module "softnas" {
   remote_ip_cidr                 = var.remote_ip_cidr
 
   bastion_private_ip             = module.vpc.vpn_private_ip
-  bastion_ip                     = module.bastion.public_ip
+  bastion_ip                     = module.vpc.bastion_public_ip
   softnas1_private_ip1           = var.softnas1_private_ip1
   softnas_volatile               = var.softnas_volatile
   envtier                        = var.envtier
@@ -385,7 +332,7 @@ variable "pcoip_skip_update" {
 #   remote_ip_cidr    = "${var.remote_ip_cidr}"
 #   public_subnet_ids = "${module.vpc.public_subnets}"
 
-#   bastion_ip = "${module.bastion.public_ip}"
+#   bastion_ip = "${module.vpc.bastion_public_ip}"
 
 #   aws_key_name    = "${var.aws_key_name}"
 #   private_key = "${file("${var.aws_private_key_path}")}"
@@ -444,7 +391,7 @@ module "workstation" {
   softnas_private_ip1             = module.softnas.softnas1_private_ip
   provision_softnas_volumes       = module.softnas.provision_softnas_volumes
   attach_local_mounts_after_start = module.softnas.attach_local_mounts_after_start
-  bastion_ip                      = module.bastion.public_ip
+  bastion_ip                      = module.vpc.bastion_public_ip
 
   #sleep will stop instances to save cost during idle time.
   sleep                      = var.sleep
@@ -501,7 +448,7 @@ module "node" {
   softnas_private_ip1             = module.softnas.softnas1_private_ip
   provision_softnas_volumes       = module.softnas.provision_softnas_volumes
   attach_local_mounts_after_start = module.softnas.attach_local_mounts_after_start
-  bastion_ip                      = module.bastion.public_ip
+  bastion_ip                      = module.vpc.bastion_public_ip
 
   openfirehawkserver = var.openfirehawkserver
 
