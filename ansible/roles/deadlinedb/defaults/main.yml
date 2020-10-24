@@ -1,3 +1,0 @@
----
-# defaults file for ansible/roles/deadline-db-restart
-out_file: 'deadline_db.log'

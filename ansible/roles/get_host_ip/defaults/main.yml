@@ -1,3 +1,0 @@
----
-# defaults file for ansible/roles/get_host_ip
-update_openfirehawkserver_ip_var: false
