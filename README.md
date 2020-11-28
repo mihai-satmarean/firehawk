@@ -7,7 +7,7 @@ Open Firehawk is an environment to create an on demand render farm for VFX with 
 Much of the work is continuing on this project https://github.com/firehawkvfx/firehawk-main.
 The purpose of the firehawk-main repo is to maintain a central account and Hashicorp Vault to deploy resources from AWS, enabling full cloud deployments and secrets maangement.  The future of this firehawk repo will become a spoke of the firehawk-main deployment hub.
 
-We document steps you can follow for replication of Firehawk in another environment.
+Here we document steps you can follow for replication of Firehawk in your environment.
 
 Some of this documentation will share what you will need to learn if you are a TD / Pipeline TD new to running cloud resources.  I'd recommend learning Terraform and Ansible.  I recommend passively putting these tutorials on without necesarily following the steps to just expose yourself to the concepts and get an overview.  Going through the steps yourself is even better.
 
