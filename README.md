@@ -4,8 +4,8 @@ Open Firehawk is an environment to create an on demand render farm for VFX with 
 
 ## Intro
 
-Much of the work is continuing on this project here https://github.com/firehawkvfx/firehawk-main.
-The purpose of the firehawk-main repo is to maintain a central account and Hashicorp Vault to deploy resources from AWS.  The future of this repo will become a spoke of the main deployment hub.
+Much of the work is continuing on this project https://github.com/firehawkvfx/firehawk-main.
+The purpose of the firehawk-main repo is to maintain a central account and Hashicorp Vault to deploy resources from AWS, enabling full cloud deployments and secrets maangement.  The future of this firehawk repo will become a spoke of the firehawk-main deployment hub.
 
 We document steps you can follow for replication of Firehawk in another environment.
 
