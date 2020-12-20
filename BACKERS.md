@@ -14,6 +14,7 @@ Edward Twiss
 Seona Hwang  
 Chris Hönninger  
 Anthony Morrelle  
+Geordie Martinez  
 
 ### Previous Backers
 Janghyung Kim  
